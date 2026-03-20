@@ -1,5 +1,6 @@
 # CODECRAFTERS🏫
-## Welcome Learners
+> Welcome Learners
+
 CodeCrafters is a two-player collaborative educational game that teaches Python programming through a story-driven experience. Players work together to build a virtual school campus — one writes the code, both see the result.
 
 ## What is it?
