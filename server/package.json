@@ -12,6 +12,7 @@
   "type": "module",
   "dependencies": {
     "express": "^5.2.1",
-    "mongoose": "^9.3.1"
+    "mongoose": "^9.3.1",
+    "socket.io": "^4.8.3"
   }
 }
