@@ -4,19 +4,13 @@ let pool;
 
 async function connectPostgres() {
   pool = new Pool({
-    host: process.env.POSTGRES_HOST || 'localhost',
-    port: process.env.POSTGRES_PORT || 5432,
-    database: process.env.POSTGRES_DB || 'codecrafters',
-    user: process.env.POSTGRES_USER || 'postgres',
-    password: process.env.POSTGRES_PASSWORD || 'postgres',
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   });
 
-  // Verify connection
   const client = await pool.connect();
   console.log('✅  PostgreSQL connected');
   client.release();
-
-  // Run schema init
   await initSchema();
 }
 
@@ -27,6 +21,7 @@ async function initSchema() {
       stage       INTEGER DEFAULT 1,
       score       INTEGER DEFAULT 0,
       completed   BOOLEAN DEFAULT FALSE,
+      state       JSONB,
       created_at  TIMESTAMP DEFAULT NOW()
     );
 

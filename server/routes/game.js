@@ -2,23 +2,16 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { getPool } = require('../db/postgres');
-const { setSessionState, getSessionState } = require('../db/redis');
+const { setSessionState, getSessionState } = require('../db/session');
 
-// POST /api/game/create  — create a new session, returns sessionId
 router.post('/create', async (req, res) => {
   const { playerName } = req.body;
   if (!playerName) return res.status(400).json({ error: 'playerName required' });
 
-  const sessionId = uuidv4().slice(0, 8).toUpperCase(); // Short human-readable ID
+  const sessionId = uuidv4().slice(0, 8).toUpperCase();
   const pool = getPool();
 
   try {
-    await pool.query('INSERT INTO sessions (id) VALUES ($1)', [sessionId]);
-    await pool.query(
-      'INSERT INTO players (session_id, name, role) VALUES ($1, $2, $3)',
-      [sessionId, playerName, 'Architect']
-    );
-
     const initialState = {
       sessionId,
       stage: 1,
@@ -29,7 +22,15 @@ router.post('/create', async (req, res) => {
       },
       chat: [],
     };
-    await setSessionState(sessionId, initialState);
+
+    await pool.query(
+      'INSERT INTO sessions (id, state) VALUES ($1, $2)',
+      [sessionId, JSON.stringify(initialState)]
+    );
+    await pool.query(
+      'INSERT INTO players (session_id, name, role) VALUES ($1, $2, $3)',
+      [sessionId, playerName, 'Architect']
+    );
 
     res.json({ sessionId, role: 'Architect', message: 'Session created. Share the ID with your partner.' });
   } catch (err) {
@@ -38,7 +39,6 @@ router.post('/create', async (req, res) => {
   }
 });
 
-// POST /api/game/join  — join an existing session as Builder
 router.post('/join', async (req, res) => {
   const { sessionId, playerName } = req.body;
   if (!sessionId || !playerName) return res.status(400).json({ error: 'sessionId and playerName required' });
@@ -69,7 +69,6 @@ router.post('/join', async (req, res) => {
   }
 });
 
-// GET /api/game/:sessionId  — fetch current state
 router.get('/:sessionId', async (req, res) => {
   const state = await getSessionState(req.params.sessionId);
   if (!state) return res.status(404).json({ error: 'Session not found' });

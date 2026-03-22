@@ -7,18 +7,10 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=codecrafters
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - JUDGE0_URL=http://judge0:2358
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/codecrafters
     depends_on:
-      - postgres
-      - redis
-      - judge0
+      postgres:
+        condition: service_healthy
     volumes:
       - .:/app
       - /app/node_modules
@@ -34,58 +26,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-
-  judge0:
-    image: judge0/judge0:latest
-    platform: linux/amd64
-    ports:
-      - "2358:2358"
-    depends_on:
-      - judge0-db
-      - judge0-redis
-    environment:
-      POSTGRES_HOST: judge0-db
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: judge0
-      POSTGRES_USER: judge0
-      POSTGRES_PASSWORD: judge0
-      REDIS_HOST: judge0-redis
-      REDIS_PORT: 6379
-    privileged: true
-
-  judge0-workers:
-    image: judge0/judge0:latest
-    platform: linux/amd64
-    command: ["./scripts/workers"]
-    depends_on:
-      - judge0
-    environment:
-      POSTGRES_HOST: judge0-db
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: judge0
-      POSTGRES_USER: judge0
-      POSTGRES_PASSWORD: judge0
-      REDIS_HOST: judge0-redis
-      REDIS_PORT: 6379
-    privileged: true
-
-  judge0-db:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_DB: judge0
-      POSTGRES_USER: judge0
-      POSTGRES_PASSWORD: judge0
-    volumes:
-      - judge0_db_data:/var/lib/postgresql/data
-
-  judge0-redis:
-    image: redis:6-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
-  judge0_db_data:
