@@ -11,38 +11,118 @@ Concepts covered across the five stages include variables, input/output, conditi
 
 ## Tech Stack
 
-- **Frontend** — Next.js (React), Monaco Editor, TailwindCSS
-- **Backend** — Node.js, Express, Socket.IO
-- **Code Execution** — Judge0 (sandboxed Python runner)
-- **Database** — PostgreSQL (persistent data), Redis (live game state)
-- **Infrastructure** — Docker Compose
+- Backend: Node.js, Express, Socket.IO
+- Database: PostgreSQL
+- Frontend workspace: Next.js 16 + React 19 + TypeScript
+- Infrastructure: Docker + Docker Compose
 
-## Project Structure
+## Repository Structure
 
+```text
+.
+├── client/                 # Next.js app and static client assets
+│   ├── app/                # App Router pages and layouts
+│   └── public/             # Static game UI files (index.html/css/js)
+├── server/
+│   ├── db/                 # Postgres and in-memory session helpers
+│   ├── routes/             # REST APIs for game + code execution
+│   ├── socket/             # Socket event handlers
+│   └── server.js           # Express + Socket.IO bootstrap
+├── Dockerfile
+└── docker-compose.yml
 ```
-codecrafters/
-├── client/          # Next.js frontend
-│   ├── app/
-│   │   ├── (auth)/  # Route group for login/signup
-│   └── components/
-└── server/          # Express + Socket.IO backend
-    ├── server.js
-    ├── routes/
-    └── socket/
-```
 
-## Getting Started
+## Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Docker Desktop (for containerized setup)
+
+## Quick Start (Docker)
+
+This is the easiest way to run the app with PostgreSQL.
 
 ```bash
-# Clone the repo
-git clone https://github.com/sri-nivas1227/codecrafters.git
-cd codecrafters
-
-# Start all services
-docker-compose up
+docker compose up --build
 ```
 
-Client runs on `http://localhost:3000`, server on `http://localhost:5000`.
+App URL:
+
+- http://localhost:3000
+
+Stop services:
+
+```bash
+docker compose down
+```
+
+Remove volumes (reset database):
+
+```bash
+docker compose down -v
+```
+
+## Local Development (Without Docker)
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start PostgreSQL locally and create a database named codecrafters.
+
+3. Set environment variables in a .env file at the repository root:
+
+```env
+PORT=3000
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/codecrafters
+```
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+## API Overview
+
+Base URL: http://localhost:3000
+
+- POST /api/game/create
+    - Body: { "playerName": "Alice" }
+- POST /api/game/join
+    - Body: { "sessionId": "AB12CD34", "playerName": "Bob" }
+- GET /api/game/:sessionId
+- POST /api/code/run
+    - Body: { "source_code": "print('hi')", "expected_output": "hi" }
+
+## Socket.IO
+
+Socket.IO is initialized on the same HTTP server as Express.
+
+- Default CORS is currently open for development.
+- Event handlers are defined in server/socket/handlers.js.
+
+## Scripts
+
+Root scripts:
+
+- npm run dev: Starts server with nodemon
+- npm start: Starts server with node
+
+Client scripts (inside client):
+
+- npm run dev
+- npm run build
+- npm run start
+- npm run lint
+
+## Notes
+
+- The backend currently serves static files from client/public.
+- The Next.js workspace under client is available for modern frontend development and iteration.
 
 ## Team
 
