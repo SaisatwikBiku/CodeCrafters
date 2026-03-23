@@ -6,6 +6,7 @@ const path = require('path');
 const cors = require('cors');
 
 const { connectPostgres } = require('./db/postgres');
+const authRoutes = require('./routes/auth');
 const gameRoutes = require('./routes/game');
 const codeRoutes = require('./routes/code');
 const registerSocketHandlers = require('./socket/handlers');
@@ -20,6 +21,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/public')));
 
+app.use('/api/auth', authRoutes);
 app.use('/api/game', gameRoutes);
 app.use('/api/code', codeRoutes);
 

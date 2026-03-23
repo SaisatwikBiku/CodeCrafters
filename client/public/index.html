@@ -8,14 +8,54 @@
 </head>
 <body>
 
-  <!-- ── LOBBY SCREEN ──────────────────────────────────── -->
-  <div id="screen-lobby" class="screen active">
-    <div class="lobby-card">
+  <!-- ── LOGIN SCREEN ──────────────────────────────────── -->
+  <div id="screen-login" class="screen active">
+    <div class="auth-card">
       <h1 class="logo">CodeCrafters <span>🏫</span></h1>
       <p class="tagline">Build a school. Learn Python. Together.</p>
 
       <div class="form-group">
-        <input id="input-name" type="text" placeholder="Your name" maxlength="24" />
+        <input id="login-username" type="text" placeholder="Username" maxlength="24" />
+      </div>
+      <div class="form-group">
+        <input id="login-password" type="password" placeholder="Password" />
+      </div>
+      <button id="btn-login" class="btn btn-primary" style="width:100%">Login</button>
+      <div id="login-error" class="auth-error hidden"></div>
+      <p class="auth-switch">Don't have an account? <a href="#" id="go-register">Register</a></p>
+    </div>
+  </div>
+
+  <!-- ── REGISTER SCREEN ───────────────────────────────── -->
+  <div id="screen-register" class="screen">
+    <div class="auth-card">
+      <h1 class="logo">CodeCrafters <span>🏫</span></h1>
+      <p class="tagline">Create your account</p>
+
+      <div class="form-group">
+        <input id="reg-username" type="text" placeholder="Username" maxlength="24" />
+      </div>
+      <div class="form-group">
+        <input id="reg-password" type="password" placeholder="Password (min 6 chars)" />
+      </div>
+      <button id="btn-register" class="btn btn-primary" style="width:100%">Register</button>
+      <div id="register-error" class="auth-error hidden"></div>
+      <p class="auth-switch">Already have an account? <a href="#" id="go-login">Login</a></p>
+    </div>
+  </div>
+
+  <!-- ── LOBBY SCREEN ──────────────────────────────────── -->
+  <div id="screen-lobby" class="screen">
+    <div class="lobby-card">
+      <div class="lobby-header">
+        <h1 class="logo">CodeCrafters <span>🏫</span></h1>
+        <button id="btn-logout" class="btn btn-secondary btn-sm">Logout</button>
+      </div>
+      <p class="tagline">Welcome, <strong id="lobby-username"></strong>!</p>
+
+      <div id="active-session-banner" class="active-banner hidden">
+        <p>🎮 You have an active game (Session: <strong id="active-session-id"></strong>, Stage <strong id="active-session-stage"></strong>/5)</p>
+        <button id="btn-rejoin" class="btn btn-primary">Rejoin Game</button>
       </div>
 
       <div class="button-row">
@@ -28,7 +68,7 @@
         <button id="btn-confirm-join" class="btn btn-primary">Join</button>
       </div>
 
-      <div id="lobby-status" class="status-area">Status: Waiting for connection...</div>
+      <div id="lobby-status" class="status-area">Status: Ready</div>
     </div>
   </div>
 
@@ -45,8 +85,6 @@
 
   <!-- ── GAME SCREEN ───────────────────────────────────── -->
   <div id="screen-game" class="screen">
-
-    <!-- Header -->
     <header class="game-header">
       <span class="game-title">CodeCrafters 🏫</span>
       <div class="stage-info">
@@ -59,34 +97,26 @@
       <span id="hdr-score" class="score">Score: 0</span>
     </header>
 
-    <!-- Split layout -->
     <main class="game-main">
-
-      <!-- LEFT: Code Studio -->
       <section class="panel panel-code">
         <div class="mission-brief">
           <h3 id="mission-title">Mission</h3>
           <p id="mission-desc">Loading...</p>
           <ul id="mission-steps"></ul>
         </div>
-
         <div class="editor-wrap">
           <textarea id="code-editor" spellcheck="false" placeholder="# Write your Python here..."></textarea>
         </div>
-
         <div class="console-wrap">
           <div id="console-output" class="console">Output will appear here...</div>
         </div>
-
         <button id="btn-run" class="btn btn-run">▶ RUN CODE / SUBMIT</button>
       </section>
 
-      <!-- RIGHT: Campus + Chat -->
       <section class="panel panel-campus">
         <div class="campus-wrap">
           <canvas id="campus-canvas" width="400" height="300"></canvas>
         </div>
-
         <div class="chat-wrap">
           <div id="chat-messages" class="chat-messages"></div>
           <div class="chat-input-row">
@@ -133,10 +163,10 @@
     </div>
   </div>
 
-  <!-- Socket.IO client (served automatically by Socket.IO server) -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/stages.js"></script>
   <script src="/js/campus.js"></script>
+  <script src="/js/auth.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

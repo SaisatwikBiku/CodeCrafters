@@ -1,59 +1,56 @@
 /**
  * app.js — CodeCrafters frontend logic
- * Manages screens, Socket.IO events, and code submission.
  */
 
-// ── State ──────────────────────────────────────────────────
 const state = {
   socket: null,
   sessionId: null,
   playerName: null,
-  role: null,          // 'Architect' | 'Builder'
+  role: null,
   currentStage: 1,
   score: 0,
   completedStages: 0,
 };
 
-// ── DOM Refs ───────────────────────────────────────────────
 const screens = {
+  login:    document.getElementById('screen-login'),
+  register: document.getElementById('screen-register'),
   lobby:    document.getElementById('screen-lobby'),
   waiting:  document.getElementById('screen-waiting'),
   game:     document.getElementById('screen-game'),
   complete: document.getElementById('screen-complete'),
 };
 
-const lobbyStatus     = document.getElementById('lobby-status');
-const inputName       = document.getElementById('input-name');
-const inputSessionId  = document.getElementById('input-session-id');
-const joinPanel       = document.getElementById('join-panel');
+const lobbyStatus      = document.getElementById('lobby-status');
+const inputSessionId   = document.getElementById('input-session-id');
+const joinPanel        = document.getElementById('join-panel');
 const displaySessionId = document.getElementById('display-session-id');
-const displayRole     = document.getElementById('display-role');
+const displayRole      = document.getElementById('display-role');
 
-const hdrRole   = document.getElementById('hdr-role');
-const hdrStage  = document.getElementById('hdr-stage');
-const hdrScore  = document.getElementById('hdr-score');
+const hdrRole     = document.getElementById('hdr-role');
+const hdrStage    = document.getElementById('hdr-stage');
+const hdrScore    = document.getElementById('hdr-score');
 const progressBar = document.getElementById('progress-bar');
 
-const missionTitle = document.getElementById('mission-title');
-const missionDesc  = document.getElementById('mission-desc');
-const missionSteps = document.getElementById('mission-steps');
-const codeEditor   = document.getElementById('code-editor');
+const missionTitle  = document.getElementById('mission-title');
+const missionDesc   = document.getElementById('mission-desc');
+const missionSteps  = document.getElementById('mission-steps');
+const codeEditor    = document.getElementById('code-editor');
 const consoleOutput = document.getElementById('console-output');
-const btnRun       = document.getElementById('btn-run');
+const btnRun        = document.getElementById('btn-run');
 
 const chatMessages = document.getElementById('chat-messages');
 const chatInput    = document.getElementById('chat-input');
 const btnSend      = document.getElementById('btn-send');
-
 const campusCanvas = document.getElementById('campus-canvas');
 
 const modalWaiting  = document.getElementById('modal-waiting');
 const modalComplete = document.getElementById('modal-stage-complete');
-const completeTitle  = document.getElementById('complete-title');
+const completeTitle    = document.getElementById('complete-title');
 const completeSubtitle = document.getElementById('complete-subtitle');
-const completeScore  = document.getElementById('complete-score');
-const completeCanvas = document.getElementById('complete-canvas');
-const btnNextLevel   = document.getElementById('btn-next-level');
+const completeScore    = document.getElementById('complete-score');
+const completeCanvas   = document.getElementById('complete-canvas');
+const btnNextLevel     = document.getElementById('btn-next-level');
 
 // ── Screen Manager ─────────────────────────────────────────
 function showScreen(name) {
@@ -61,11 +58,8 @@ function showScreen(name) {
   screens[name].classList.add('active');
 }
 
-// ── Lobby Logic ────────────────────────────────────────────
+// ── Create Game ────────────────────────────────────────────
 document.getElementById('btn-create').addEventListener('click', async () => {
-  const name = inputName.value.trim();
-  if (!name) return alert('Enter your name first!');
-
   const btn = document.getElementById('btn-create');
   btn.disabled = true;
   btn.textContent = 'Creating...';
@@ -73,8 +67,7 @@ document.getElementById('btn-create').addEventListener('click', async () => {
   try {
     const res = await fetch('/api/game/create', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerName: name }),
+      headers: AUTH.authHeaders(),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -84,14 +77,13 @@ document.getElementById('btn-create').addEventListener('click', async () => {
       return;
     }
 
-    state.playerName = name;
+    state.playerName = AUTH.getUsername();
     state.sessionId  = data.sessionId;
     state.role       = data.role;
 
     displaySessionId.textContent = data.sessionId;
     displayRole.textContent      = data.role;
     showScreen('waiting');
-
     connectSocket();
   } catch (err) {
     alert('Could not connect to server.');
@@ -100,14 +92,13 @@ document.getElementById('btn-create').addEventListener('click', async () => {
   }
 });
 
+// ── Join Game ──────────────────────────────────────────────
 document.getElementById('btn-join').addEventListener('click', () => {
   joinPanel.classList.toggle('hidden');
 });
 
 document.getElementById('btn-confirm-join').addEventListener('click', async () => {
-  const name = inputName.value.trim();
-  const id   = inputSessionId.value.trim().toUpperCase();
-  if (!name) return alert('Enter your name first!');
+  const id  = inputSessionId.value.trim().toUpperCase();
   if (!id || id.length < 6) return alert('Enter a valid session ID!');
 
   const btn = document.getElementById('btn-confirm-join');
@@ -117,8 +108,8 @@ document.getElementById('btn-confirm-join').addEventListener('click', async () =
   try {
     const res = await fetch('/api/game/join', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerName: name, sessionId: id }),
+      headers: AUTH.authHeaders(),
+      body: JSON.stringify({ sessionId: id }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -128,7 +119,7 @@ document.getElementById('btn-confirm-join').addEventListener('click', async () =
       return;
     }
 
-    state.playerName   = name;
+    state.playerName   = AUTH.getUsername();
     state.sessionId    = data.sessionId;
     state.role         = data.role;
     state.currentStage = data.stage;
@@ -143,7 +134,18 @@ document.getElementById('btn-confirm-join').addEventListener('click', async () =
 
 // ── Socket.IO ──────────────────────────────────────────────
 function connectSocket() {
-  state.socket = io();
+  // Handle rejoin from auth.js
+  if (window._pendingJoin) {
+    state.playerName   = AUTH.getUsername();
+    state.sessionId    = window._pendingJoin.sessionId;
+    state.role         = window._pendingJoin.role;
+    state.currentStage = window._pendingJoin.stage;
+    window._pendingJoin = null;
+  }
+
+  state.socket = io({
+    auth: { token: AUTH.getToken() },
+  });
 
   state.socket.on('connect', () => {
     lobbyStatus.textContent = 'Status: Connected ✅';
@@ -157,10 +159,10 @@ function connectSocket() {
   state.socket.on('player_joined', ({ playerName, role, state: gameState }) => {
     appendSystemChat(`${playerName} joined as ${role}.`);
 
-    // Both players present → start game
     if (gameState?.players?.Architect && gameState?.players?.Builder) {
-      state.currentStage = gameState.stage;
-      state.score        = gameState.score;
+      state.currentStage    = gameState.stage;
+      state.score           = gameState.score;
+      state.completedStages = gameState.stage - 1;
       loadStage(state.currentStage);
       showScreen('game');
     }
@@ -180,7 +182,6 @@ function connectSocket() {
     state.completedStages = completedStage;
     state.score           = score;
     state.currentStage    = nextStage;
-
     modalWaiting.classList.add('hidden');
     showStageCompleteModal(completedStage, score);
   });
@@ -241,7 +242,7 @@ btnRun.addEventListener('click', async () => {
 
     const res = await fetch('/api/code/run', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: AUTH.authHeaders(),
       body: JSON.stringify({ source_code: code, expected_output: expected }),
     });
     const data = await res.json();
@@ -265,7 +266,6 @@ btnRun.addEventListener('click', async () => {
     } else if (!data.stderr) {
       consoleOutput.textContent += '\n\n❌ Not quite right — try again!';
     }
-
   } catch (err) {
     consoleOutput.textContent = 'Error: Could not reach code runner.';
     consoleOutput.classList.add('error');

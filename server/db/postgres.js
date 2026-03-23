@@ -16,6 +16,13 @@ async function connectPostgres() {
 
 async function initSchema() {
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id          SERIAL PRIMARY KEY,
+      username    TEXT UNIQUE NOT NULL,
+      password    TEXT NOT NULL,
+      created_at  TIMESTAMP DEFAULT NOW()
+    );
+
     CREATE TABLE IF NOT EXISTS sessions (
       id          TEXT PRIMARY KEY,
       stage       INTEGER DEFAULT 1,
@@ -28,6 +35,7 @@ async function initSchema() {
     CREATE TABLE IF NOT EXISTS players (
       id          SERIAL PRIMARY KEY,
       session_id  TEXT REFERENCES sessions(id),
+      user_id     INTEGER REFERENCES users(id),
       name        TEXT NOT NULL,
       role        TEXT CHECK (role IN ('Architect', 'Builder')),
       stage_done  BOOLEAN DEFAULT FALSE,
