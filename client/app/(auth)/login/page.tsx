@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AUTH } from '@/lib/auth';
+import { SERVER_URL } from '@/app/CONSTANT';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function LoginPage() {
     }
     setLoginLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${SERVER_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: loginUsername, password: loginPassword }),
@@ -55,7 +56,7 @@ export default function LoginPage() {
     }
     setRegLoading(true);
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${SERVER_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: regUsername, password: regPassword }),

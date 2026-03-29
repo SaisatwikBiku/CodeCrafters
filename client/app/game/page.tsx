@@ -9,6 +9,7 @@ import { ChatMessage } from '@/types';
 import dynamic from 'next/dynamic';
 import WaitingModal from '@/components/game/WaitingModal';
 import StageCompleteModal from '@/components/game/StageCompleteModal';
+import { SERVER_URL } from '../CONSTANT';
 
 // Campus canvas is canvas-heavy — load client-only
 const CampusCanvas = dynamic(() => import('@/components/campus/CampusCanvas'), { ssr: false });
@@ -135,7 +136,7 @@ export default function GamePage() {
     try {
       const stage = STAGES[state.currentStage - 1];
       const task = stage.tasks[state.role!];
-      const res = await fetch('/api/code/run', {
+      const res = await fetch(`${SERVER_URL}/api/code/run`, {
         method: 'POST',
         headers: AUTH.authHeaders(),
         body: JSON.stringify({ source_code: code, expected_output: task.expected_output }),

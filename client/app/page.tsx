@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AUTH } from '@/lib/auth';
+import { SERVER_URL } from './CONSTANT';
 
 export default function HomePage() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function HomePage() {
     const checkAuth = async () => {
       if (AUTH.isLoggedIn()) {
         try {
-          const res = await fetch('/api/auth/me', { headers: AUTH.authHeaders() });
+          const res = await fetch(`${SERVER_URL}/api/auth/me`, { headers: AUTH.authHeaders() });
           if (res.ok) {
             router.replace('/lobby');
             return;

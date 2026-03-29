@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AUTH } from '@/lib/auth';
 import { useGame } from '@/lib/game-context';
 import { ActiveSession } from '@/types';
+import { SERVER_URL } from '../CONSTANT';
 
 export default function LobbyPage() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function LobbyPage() {
     // Check for an active session to resume
     const fetchActive = async () => {
       try {
-        const res = await fetch('/api/game/active', { headers: AUTH.authHeaders() });
+        const res = await fetch(`${SERVER_URL}/api/game/active`, { headers: AUTH.authHeaders() });
         if (res.ok) {
           const { session } = await res.json();
           if (session) setActiveSession(session);
@@ -50,7 +51,7 @@ export default function LobbyPage() {
     setCreateLoading(true);
     setStatus('Status: Creating session...');
     try {
-      const res = await fetch('/api/game/create', {
+      const res = await fetch(`${SERVER_URL}/api/game/create`, {
         method: 'POST',
         headers: AUTH.authHeaders(),
       });
@@ -83,7 +84,7 @@ export default function LobbyPage() {
     setJoinLoading(true);
     setStatus('Status: Joining...');
     try {
-      const res = await fetch('/api/game/join', {
+      const res = await fetch(`${SERVER_URL}/api/game/join`, {
         method: 'POST',
         headers: AUTH.authHeaders(),
         body: JSON.stringify({ sessionId: id }),
@@ -112,7 +113,7 @@ export default function LobbyPage() {
   const handleRejoin = async () => {
     if (!activeSession) return;
     try {
-      const res = await fetch('/api/game/join', {
+      const res = await fetch(`${SERVER_URL}/api/game/join`, {
         method: 'POST',
         headers: AUTH.authHeaders(),
         body: JSON.stringify({ sessionId: activeSession.id }),
