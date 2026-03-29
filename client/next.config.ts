@@ -1,7 +1,8 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  serverExternalPackages: ['socket.io-client'],
+  images: { unoptimized: true },
+  turbopack: {},
 };
 
-export default nextConfig;
+module.exports = nextConfig;

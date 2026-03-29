@@ -1,3 +1,23 @@
 {
-  "type": "commonjs"
+  "name": "codecrafters",
+  "version": "1.0.0",
+  "description": "Two-player collaborative Python learning game",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "pg": "^8.11.0",
+    "uuid": "^9.0.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
