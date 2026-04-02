@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AUTH } from '@/lib/auth';
-import { SERVER_URL } from './CONSTANT';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AUTH } from "@/lib/auth";
+import { SERVER_URL } from "./CONSTANT";
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,9 +12,11 @@ export default function HomePage() {
     const checkAuth = async () => {
       if (AUTH.isLoggedIn()) {
         try {
-          const res = await fetch(`${SERVER_URL}/api/auth/me`, { headers: AUTH.authHeaders() });
+          const res = await fetch(`${SERVER_URL}/api/auth/me`, {
+            headers: AUTH.authHeaders(),
+          });
           if (res.ok) {
-            router.replace('/lobby');
+            router.replace("/lobby");
             return;
           } else {
             AUTH.clearAuth();
@@ -23,7 +25,7 @@ export default function HomePage() {
           AUTH.clearAuth();
         }
       }
-      router.replace('/login');
+      router.replace("/login");
     };
 
     checkAuth();
@@ -32,11 +34,11 @@ export default function HomePage() {
   return (
     <div
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#1a0a2e',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#1a0a2e",
       }}
     >
       <div className="spinner" />

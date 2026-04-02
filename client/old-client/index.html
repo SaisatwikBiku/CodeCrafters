@@ -1,228 +1,325 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodeCrafters 🏫</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Black+Han+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeCrafters 🏫</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Black+Han+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <!-- ── LOGIN / LANDING SCREEN ──────────────────────────── -->
+    <div id="screen-login" class="screen active">
+      <div class="landing-split">
+        <!-- LEFT: Full Background image only -->
+        <div class="hero-side"></div>
 
-  <!-- ── LOGIN / LANDING SCREEN ──────────────────────────── -->
-  <div id="screen-login" class="screen active">
-    <div class="landing-split">
-
-      <!-- LEFT: Full Background image only -->
-      <div class="hero-side"></div>
-
-      <!-- RIGHT: Dark purple panel with all content + form -->
-      <div class="auth-side">
-        <!-- Title + features -->
-        <div class="hero-inner" style="width:100%;max-width:380px;">
-          <h1 class="hero-title">Code<span>Crafters!</span></h1>
-          <p class="hero-sub">Collaborate. Code. Build Your Campus together.</p>
-          <div class="hero-blocks">
-            <div class="hero-block">🧱 Play as Architect or Builder</div>
-            <div class="hero-block">🐍 Learn Python step by step</div>
-            <div class="hero-block">🏆 5 stages · 500 points</div>
-            <div class="hero-block">💬 Chat with your partner</div>
-          </div>
-          <div class="hero-roles" style="margin-bottom:1.5rem;">
-            <div class="role-chip yellow">🧱 Architect</div>
-            <div class="role-chip purple">🔨 Builder</div>
-          </div>
-        </div>
-        <!-- Login / Register form -->
-        <div class="auth-box" style="width:100%;max-width:380px;">
-          <div class="auth-tabs">
-            <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
-            <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</button>
-          </div>
-          <!-- Login Form -->
-          <div id="form-login">
-            <p class="form-welcome">Ready to play? 🎮</p>
-            <p class="form-sub">Login to jump back in!</p>
-            <div class="form-group">
-              <input id="login-username" type="text" placeholder="👤  Username" maxlength="24" />
+        <!-- RIGHT: Dark purple panel with all content + form -->
+        <div class="auth-side">
+          <!-- Title + features -->
+          <div class="hero-inner" style="width: 100%; max-width: 380px">
+            <h1 class="hero-title">Code<span>Crafters!</span></h1>
+            <p class="hero-sub">
+              Collaborate. Code. Build Your Campus together.
+            </p>
+            <div class="hero-blocks">
+              <div class="hero-block">🧱 Play as Architect or Builder</div>
+              <div class="hero-block">🐍 Learn Python step by step</div>
+              <div class="hero-block">🏆 5 stages · 500 points</div>
+              <div class="hero-block">💬 Chat with your partner</div>
             </div>
-            <div class="form-group">
-              <input id="login-password" type="password" placeholder="🔒  Password" />
+            <div class="hero-roles" style="margin-bottom: 1.5rem">
+              <div class="role-chip yellow">🧱 Architect</div>
+              <div class="role-chip purple">🔨 Builder</div>
             </div>
-            <button id="btn-login" class="btn btn-primary" style="width:100%">▶ PLAY NOW!</button>
-            <div id="login-error" class="auth-error hidden"></div>
           </div>
-          <!-- Register Form -->
-          <div id="form-register" class="hidden">
-            <p class="form-welcome">Join the fun! 🎉</p>
-            <p class="form-sub">Create your free account!</p>
-            <div class="form-group">
-              <input id="reg-username" type="text" placeholder="👤  Username" maxlength="24" />
+          <!-- Login / Register form -->
+          <div class="auth-box" style="width: 100%; max-width: 380px">
+            <div class="auth-tabs">
+              <button
+                class="auth-tab active"
+                id="tab-login"
+                onclick="switchTab('login')"
+              >
+                Login
+              </button>
+              <button
+                class="auth-tab"
+                id="tab-register"
+                onclick="switchTab('register')"
+              >
+                Register
+              </button>
             </div>
-            <div class="form-group">
-              <input id="reg-password" type="password" placeholder="🔒  Password (min 6 chars)" />
+            <!-- Login Form -->
+            <div id="form-login">
+              <p class="form-welcome">Ready to play? 🎮</p>
+              <p class="form-sub">Login to jump back in!</p>
+              <div class="form-group">
+                <input
+                  id="login-username"
+                  type="text"
+                  placeholder="👤  Username"
+                  maxlength="24"
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="🔒  Password"
+                />
+              </div>
+              <button
+                id="btn-login"
+                class="btn btn-primary"
+                style="width: 100%"
+              >
+                ▶ PLAY NOW!
+              </button>
+              <div id="login-error" class="auth-error hidden"></div>
             </div>
-            <button id="btn-register" class="btn btn-primary" style="width:100%">🚀 Let's Go!</button>
-            <div id="register-error" class="auth-error hidden"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── REGISTER SCREEN (kept for JS compat but hidden) ── -->
-  <div id="screen-register" class="screen" style="display:none!important"></div>
-
-  <!-- ── LOBBY SCREEN ──────────────────────────────────────── -->
-  <div id="screen-lobby" class="screen lobby-bg-screen">
-    <div class="lobby-card">
-      <div class="lobby-header">
-        <h1 class="logo">CodeCrafters <span>🏫</span></h1>
-        <button id="btn-logout" class="btn btn-secondary btn-sm">Logout</button>
-      </div>
-      <p class="tagline">Welcome, <strong id="lobby-username"></strong>!</p>
-
-      <div id="active-session-banner" class="active-banner hidden">
-        <p>🎮 You have an active game (Session: <strong id="active-session-id"></strong>, Stage <strong id="active-session-stage"></strong>/5)</p>
-        <button id="btn-rejoin" class="btn btn-primary">Rejoin Game</button>
-      </div>
-
-      <div class="button-row">
-        <button id="btn-create" class="btn btn-primary">NEW GAME (Create ID)</button>
-        <button id="btn-join" class="btn btn-secondary">JOIN GAME (Enter ID)</button>
-      </div>
-
-      <div id="join-panel" class="hidden">
-        <input id="input-session-id" type="text" placeholder="Enter Session ID" maxlength="8" />
-        <button id="btn-confirm-join" class="btn btn-primary">Join</button>
-      </div>
-
-      <div id="lobby-status" class="status-area">Status: Ready</div>
-    </div>
-  </div>
-
-  <!-- ── WAITING SCREEN ───────────────────────────────────── -->
-  <div id="screen-waiting" class="screen">
-    <div class="waiting-card">
-      <h2>Session Created!</h2>
-      <p>Share this ID with your partner:</p>
-      <div id="display-session-id" class="session-id-display">------</div>
-      <p class="hint">You are the <strong id="display-role">Architect</strong>. Waiting for your partner to join...</p>
-      <div class="spinner"></div>
-    </div>
-  </div>
-
-  <!-- ── GAME SCREEN ───────────────────────────────────────── -->
-  <div id="screen-game" class="screen">
-    <header class="game-header">
-      <span class="game-title">CodeCrafters 🏫</span>
-      <div class="stage-info">
-        <span id="hdr-role" class="role-badge">Architect</span>
-        <div class="progress-bar-wrap">
-          <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
-        </div>
-        <span id="hdr-stage">Stage 1 / 5</span>
-      </div>
-      <span id="hdr-score" class="score">Score: 0</span>
-    </header>
-
-    <main class="game-main">
-      <section class="panel panel-code">
-        <div class="mission-brief">
-          <h3 id="mission-title">Mission</h3>
-          <p id="mission-desc">Loading...</p>
-          <ul id="mission-steps"></ul>
-        </div>
-        <div class="editor-wrap">
-          <textarea id="code-editor" spellcheck="false" placeholder="# Write your Python here..."></textarea>
-        </div>
-        <div class="console-wrap">
-          <div id="console-output" class="console">Output will appear here...</div>
-        </div>
-        <button id="btn-run" class="btn btn-run">▶ RUN CODE / SUBMIT</button>
-      </section>
-
-      <section class="panel panel-campus">
-        <div class="campus-wrap">
-          <canvas id="campus-canvas" width="800" height="500"></canvas>
-        </div>
-        <div class="chat-wrap">
-          <div id="chat-messages" class="chat-messages"></div>
-          <div class="chat-input-row">
-            <input id="chat-input" type="text" placeholder="Type message..." maxlength="200" />
-            <button id="btn-send" class="btn btn-send">Send</button>
+            <!-- Register Form -->
+            <div id="form-register" class="hidden">
+              <p class="form-welcome">Join the fun! 🎉</p>
+              <p class="form-sub">Create your free account!</p>
+              <div class="form-group">
+                <input
+                  id="reg-username"
+                  type="text"
+                  placeholder="👤  Username"
+                  maxlength="24"
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  id="reg-password"
+                  type="password"
+                  placeholder="🔒  Password (min 6 chars)"
+                />
+              </div>
+              <button
+                id="btn-register"
+                class="btn btn-primary"
+                style="width: 100%"
+              >
+                🚀 Let's Go!
+              </button>
+              <div id="register-error" class="auth-error hidden"></div>
+            </div>
           </div>
         </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- ── WAITING FOR PARTNER MODAL ─────────────────────────── -->
-  <div id="modal-waiting" class="modal hidden">
-    <div class="modal-box">
-      <h2>STATUS: SYNCING...</h2>
-      <p>Your task is complete. Waiting for partner to finish.</p>
-      <div class="status-row"><span class="dot green"></span> YOU: READY</div>
-      <div class="status-row"><span class="dot spin"></span> PARTNER: WORKING...</div>
-      <div class="chat-mini">
-        <div id="modal-chat-messages" class="chat-messages small"></div>
       </div>
     </div>
-  </div>
 
-  <!-- ── LEVEL COMPLETE MODAL ───────────────────────────────── -->
-  <div id="modal-stage-complete" class="modal hidden">
-    <div class="modal-box celebrate">
-      <h2 id="complete-title">LEVEL 1 COMPLETE!</h2>
-      <p id="complete-subtitle">Library Built.</p>
-      <canvas id="complete-canvas" width="300" height="200"></canvas>
-      <p id="complete-score">Team Score: 100/500 | Progress: 20%</p>
-      <button id="btn-next-level" class="btn btn-primary">GO TO NEXT LEVEL &gt;&gt;</button>
+    <!-- ── REGISTER SCREEN (kept for JS compat but hidden) ── -->
+    <div
+      id="screen-register"
+      class="screen"
+      style="display: none !important"
+    ></div>
+
+    <!-- ── LOBBY SCREEN ──────────────────────────────────────── -->
+    <div id="screen-lobby" class="screen lobby-bg-screen">
+      <div class="lobby-card">
+        <div class="lobby-header">
+          <h1 class="logo">CodeCrafters <span>🏫</span></h1>
+          <button id="btn-logout" class="btn btn-secondary btn-sm">
+            Logout
+          </button>
+        </div>
+        <p class="tagline">Welcome, <strong id="lobby-username"></strong>!</p>
+
+        <div id="active-session-banner" class="active-banner hidden">
+          <p>
+            🎮 You have an active game (Session:
+            <strong id="active-session-id"></strong>, Stage
+            <strong id="active-session-stage"></strong>/5)
+          </p>
+          <button id="btn-rejoin" class="btn btn-primary">Rejoin Game</button>
+        </div>
+
+        <div class="button-row">
+          <button id="btn-create" class="btn btn-primary">
+            NEW GAME (Create ID)
+          </button>
+          <button id="btn-join" class="btn btn-secondary">
+            JOIN GAME (Enter ID)
+          </button>
+        </div>
+
+        <div id="join-panel" class="hidden">
+          <input
+            id="input-session-id"
+            type="text"
+            placeholder="Enter Session ID"
+            maxlength="8"
+          />
+          <button id="btn-confirm-join" class="btn btn-primary">Join</button>
+        </div>
+
+        <div id="lobby-status" class="status-area">Status: Ready</div>
+      </div>
     </div>
-  </div>
 
-  <!-- ── GAME COMPLETE SCREEN ───────────────────────────────── -->
-  <div id="screen-complete" class="screen">
-    <div class="complete-card">
-      <h1>🎉 School Complete!</h1>
-      <p>Your team built the entire campus and mastered Python fundamentals.</p>
-      <canvas id="final-campus-canvas" width="500" height="350"></canvas>
-      <p id="final-score">Final Score: 500/500</p>
-      <button id="btn-play-again" class="btn btn-primary" onclick="location.reload()">Play Again</button>
+    <!-- ── WAITING SCREEN ───────────────────────────────────── -->
+    <div id="screen-waiting" class="screen">
+      <div class="waiting-card">
+        <h2>Session Created!</h2>
+        <p>Share this ID with your partner:</p>
+        <div id="display-session-id" class="session-id-display">------</div>
+        <p class="hint">
+          You are the <strong id="display-role">Architect</strong>. Waiting for
+          your partner to join...
+        </p>
+        <div class="spinner"></div>
+      </div>
     </div>
-  </div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/stages.js"></script>
-  <script src="/js/campus.js"></script>
-  <script src="/js/auth.js"></script>
-  <script src="/js/app.js"></script>
-  <script>
-    function switchTab(tab) {
-      document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
-      document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
-      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
-    }
+    <!-- ── GAME SCREEN ───────────────────────────────────────── -->
+    <div id="screen-game" class="screen">
+      <header class="game-header">
+        <span class="game-title">CodeCrafters 🏫</span>
+        <div class="stage-info">
+          <span id="hdr-role" class="role-badge">Architect</span>
+          <div class="progress-bar-wrap">
+            <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <span id="hdr-stage">Stage 1 / 5</span>
+        </div>
+        <span id="hdr-score" class="score">Score: 0</span>
+      </header>
 
-    // Keep campus canvas resolution in sync with its actual display size
-    (function() {
-      var canvas = document.getElementById('campus-canvas');
-      if (!canvas) return;
-      var ro = new ResizeObserver(function(entries) {
-        for (var e of entries) {
-          var w = Math.round(e.contentRect.width);
-          var h = Math.round(e.contentRect.height);
-          if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
-            canvas.width  = w;
-            canvas.height = h;
+      <main class="game-main">
+        <section class="panel panel-code">
+          <div class="mission-brief">
+            <h3 id="mission-title">Mission</h3>
+            <p id="mission-desc">Loading...</p>
+            <ul id="mission-steps"></ul>
+          </div>
+          <div class="editor-wrap">
+            <textarea
+              id="code-editor"
+              spellcheck="false"
+              placeholder="# Write your Python here..."
+            ></textarea>
+          </div>
+          <div class="console-wrap">
+            <div id="console-output" class="console">
+              Output will appear here...
+            </div>
+          </div>
+          <button id="btn-run" class="btn btn-run">▶ RUN CODE / SUBMIT</button>
+        </section>
+
+        <section class="panel panel-campus">
+          <div class="campus-wrap">
+            <canvas id="campus-canvas" width="800" height="500"></canvas>
+          </div>
+          <div class="chat-wrap">
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-row">
+              <input
+                id="chat-input"
+                type="text"
+                placeholder="Type message..."
+                maxlength="200"
+              />
+              <button id="btn-send" class="btn btn-send">Send</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- ── WAITING FOR PARTNER MODAL ─────────────────────────── -->
+    <div id="modal-waiting" class="modal hidden">
+      <div class="modal-box">
+        <h2>STATUS: SYNCING...</h2>
+        <p>Your task is complete. Waiting for partner to finish.</p>
+        <div class="status-row"><span class="dot green"></span> YOU: READY</div>
+        <div class="status-row">
+          <span class="dot spin"></span> PARTNER: WORKING...
+        </div>
+        <div class="chat-mini">
+          <div id="modal-chat-messages" class="chat-messages small"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LEVEL COMPLETE MODAL ───────────────────────────────── -->
+    <div id="modal-stage-complete" class="modal hidden">
+      <div class="modal-box celebrate">
+        <h2 id="complete-title">LEVEL 1 COMPLETE!</h2>
+        <p id="complete-subtitle">Library Built.</p>
+        <canvas id="complete-canvas" width="300" height="200"></canvas>
+        <p id="complete-score">Team Score: 100/500 | Progress: 20%</p>
+        <button id="btn-next-level" class="btn btn-primary">
+          GO TO NEXT LEVEL &gt;&gt;
+        </button>
+      </div>
+    </div>
+
+    <!-- ── GAME COMPLETE SCREEN ───────────────────────────────── -->
+    <div id="screen-complete" class="screen">
+      <div class="complete-card">
+        <h1>🎉 School Complete!</h1>
+        <p>
+          Your team built the entire campus and mastered Python fundamentals.
+        </p>
+        <canvas id="final-campus-canvas" width="500" height="350"></canvas>
+        <p id="final-score">Final Score: 500/500</p>
+        <button
+          id="btn-play-again"
+          class="btn btn-primary"
+          onclick="location.reload()"
+        >
+          Play Again
+        </button>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/stages.js"></script>
+    <script src="/js/campus.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+      function switchTab(tab) {
+        document
+          .getElementById("form-login")
+          .classList.toggle("hidden", tab !== "login");
+        document
+          .getElementById("form-register")
+          .classList.toggle("hidden", tab !== "register");
+        document
+          .getElementById("tab-login")
+          .classList.toggle("active", tab === "login");
+        document
+          .getElementById("tab-register")
+          .classList.toggle("active", tab === "register");
+      }
+
+      // Keep campus canvas resolution in sync with its actual display size
+      (function () {
+        var canvas = document.getElementById("campus-canvas");
+        if (!canvas) return;
+        var ro = new ResizeObserver(function (entries) {
+          for (var e of entries) {
+            var w = Math.round(e.contentRect.width);
+            var h = Math.round(e.contentRect.height);
+            if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
+              canvas.width = w;
+              canvas.height = h;
+            }
           }
-        }
-      });
-      ro.observe(canvas);
-    })();
-  </script>
-</body>
+        });
+        ro.observe(canvas);
+      })();
+    </script>
+  </body>
 </html>

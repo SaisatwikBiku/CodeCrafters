@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { GameState, Role } from '@/types';
+import { createContext, useContext, useState, ReactNode } from "react";
+import { GameState, Role } from "@/types";
 
 interface GameContextType {
   state: GameState;

@@ -1,4 +1,4 @@
-export type Role = 'Architect' | 'Builder';
+export type Role = "Architect" | "Builder";
 
 export interface GameState {
   socket: any | null;

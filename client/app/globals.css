@@ -1,29 +1,29 @@
 /* ── All @imports MUST be first ───────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Black+Han+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Black+Han+Sans&display=swap");
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --yellow:   #facc15;
-  --purple:   #7c3aed;
+  --yellow: #facc15;
+  --purple: #7c3aed;
   --purple-light: #a78bfa;
-  --green:    #22c55e;
-  --orange:   #f97316;
-  --pink:     #ec4899;
-  --red:      #ef4444;
-  --black:    #1a1a1a;
-  --white:    #ffffff;
-  --bg:       #fef9f0;
-  --surface:  #ffffff;
+  --green: #22c55e;
+  --orange: #f97316;
+  --pink: #ec4899;
+  --red: #ef4444;
+  --black: #1a1a1a;
+  --white: #ffffff;
+  --bg: #fef9f0;
+  --surface: #ffffff;
   --surface2: #f5f0e8;
-  --border:   #1a1a1a;
-  --text:     #1a1a1a;
+  --border: #1a1a1a;
+  --text: #1a1a1a;
   --text-muted: #78716c;
-  --shadow:   4px 4px 0 #1a1a1a;
+  --shadow: 4px 4px 0 #1a1a1a;
   --shadow-sm: 3px 3px 0 #1a1a1a;
-  --font: 'Nunito', sans-serif;
-  --font-display: 'Black Han Sans', sans-serif;
+  --font: "Nunito", sans-serif;
+  --font-display: "Black Han Sans", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -34,7 +34,13 @@
 }
 
 /* ── Fonts & Reset ────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   font-family: var(--font);
@@ -45,10 +51,25 @@ body {
 }
 
 /* ── Screens ──────────────────────────────────────────────── */
-.screen { display: none; min-height: 100vh; }
-.screen.active { display: flex; align-items: center; justify-content: center; }
-#screen-game.active { display: flex; flex-direction: column; align-items: stretch; }
-#screen-complete.active { display: flex; align-items: center; justify-content: center; }
+.screen {
+  display: none;
+  min-height: 100vh;
+}
+.screen.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#screen-game.active {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+#screen-complete.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ── Landing + Login Split ────────────────────────────────── */
 .landing-split {
@@ -65,22 +86,38 @@ body {
   flex: none;
   width: calc(100vh * 16 / 9);
   max-width: 72%;
-  background-image: url('/images/Background.jpeg');
+  background-image: url("/images/Background.jpeg");
   background-size: 100% 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #0d0a1e;
   position: relative;
-  border-right: 3px solid rgba(255,255,255,0.15);
+  border-right: 3px solid rgba(255, 255, 255, 0.15);
   min-height: 100vh;
   align-self: stretch;
   flex-shrink: 0;
 }
 
-.hero-inner { position: relative; z-index: 1; max-width: 500px; }
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+}
 
-.hero-icon { font-size: 0px; margin-bottom: 0px; display: none; }
-@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.hero-icon {
+  font-size: 0px;
+  margin-bottom: 0px;
+  display: none;
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
 
 .hero-title {
   font-family: var(--font-display);
@@ -88,17 +125,19 @@ body {
   color: #ffffff;
   line-height: 1.1;
   margin-bottom: 8px;
-  text-shadow: 0 3px 20px rgba(0,0,0,0.6);
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.6);
 }
-.hero-title span { color: #fbbf24; }
+.hero-title span {
+  color: #fbbf24;
+}
 
 .hero-sub {
   font-size: 13px;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 700;
   line-height: 1.5;
   margin-bottom: 0.85rem;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
 .hero-blocks {
@@ -112,19 +151,27 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   padding: 8px 14px;
   font-size: 13px;
   font-weight: 800;
   color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-  transition: transform 0.15s, background 0.15s;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.15s,
+    background 0.15s;
 }
-.hero-block:hover { transform: translateX(4px); background: rgba(255,255,255,0.22); }
+.hero-block:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.22);
+}
 
-.hero-roles { display: flex; gap: 10px; }
+.hero-roles {
+  display: flex;
+  gap: 10px;
+}
 .role-chip {
   border: 2px solid var(--black);
   border-radius: 20px;
@@ -133,8 +180,15 @@ body {
   font-weight: 900;
   box-shadow: var(--shadow-sm);
 }
-.role-chip.yellow { background: #fbbf24; color: #1a1a1a; border-color: rgba(255,255,255,0.4); }
-.role-chip.purple { background: var(--purple); color: var(--white); }
+.role-chip.yellow {
+  background: #fbbf24;
+  color: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.role-chip.purple {
+  background: var(--purple);
+  color: var(--white);
+}
 
 /* Auth Right Side */
 .auth-side {
@@ -150,13 +204,13 @@ body {
 }
 
 .auth-box {
-  background: rgba(255,255,255,0.07);
-  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
 }
 
 .auth-tabs {
@@ -180,15 +234,15 @@ body {
 .auth-tab.active {
   background: var(--purple);
   color: #fff;
-  box-shadow: 0 2px 10px rgba(124,58,237,0.5);
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.5);
 }
 .auth-tab:not(.active) {
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.65);
-  border-color: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 .auth-tab:not(.active):hover {
-  background: rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
 }
 
@@ -200,7 +254,7 @@ body {
 }
 .form-sub {
   font-size: 13px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 700;
   margin-bottom: 1.25rem;
 }
@@ -210,19 +264,22 @@ body {
   color: #ff6b6b;
   font-size: 0.85rem;
   font-weight: 800;
-  background: rgba(255,0,0,0.15);
-  border: 1px solid rgba(255,100,100,0.3);
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.3);
   border-radius: 8px;
   padding: 8px 12px;
 }
 
 /* ── Inputs ───────────────────────────────────────────────── */
-.form-group { margin-bottom: 1rem; }
+.form-group {
+  margin-bottom: 1rem;
+}
 
-input[type="text"], input[type="password"] {
+input[type="text"],
+input[type="password"] {
   width: 100%;
-  background: rgba(255,255,255,0.12);
-  border: 1.5px solid rgba(255,255,255,0.22);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
   border-radius: 10px;
   padding: 0.7rem 1rem;
   color: #ffffff;
@@ -230,17 +287,19 @@ input[type="text"], input[type="password"] {
   font-size: 0.95rem;
   font-weight: 700;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 input[type="text"]::placeholder,
 input[type="password"]::placeholder {
-  color: rgba(255,255,255,0.45);
+  color: rgba(255, 255, 255, 0.45);
 }
 input[type="text"]:focus,
 input[type="password"]:focus {
   border-color: #fbbf24;
-  box-shadow: 0 0 0 3px rgba(251,191,36,0.2);
-  background: rgba(255,255,255,0.18);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 /* ── Buttons ──────────────────────────────────────────────── */
@@ -253,29 +312,65 @@ input[type="password"]:focus {
   font-weight: 900;
   cursor: pointer;
   letter-spacing: 0.03em;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
   flex: 1;
   box-shadow: var(--shadow-sm);
 }
-.btn:hover { transform: translateY(-2px); box-shadow: 5px 5px 0 var(--black); }
-.btn:active { transform: translateY(1px); box-shadow: 2px 2px 0 var(--black); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0 var(--black);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
 
-.btn-primary { background: var(--purple); color: var(--white); }
-.btn-secondary { background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25); }
-.btn-sm { flex: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-.btn-run { background: var(--green); color: var(--black); width: 100%; margin-top: 0.75rem; font-size: 0.95rem; flex: none; padding: 0.75rem; }
-.btn-send { flex: none; padding: 0.65rem 1rem; background: var(--purple); color: var(--white); }
+.btn-primary {
+  background: var(--purple);
+  color: var(--white);
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.btn-sm {
+  flex: none;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+.btn-run {
+  background: var(--green);
+  color: var(--black);
+  width: 100%;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  flex: none;
+  padding: 0.75rem;
+}
+.btn-send {
+  flex: none;
+  padding: 0.65rem 1rem;
+  background: var(--purple);
+  color: var(--white);
+}
 
 /* ── Lobby ────────────────────────────────────────────────── */
 .lobby-card {
-  background: rgba(255,255,255,0.07);
-  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   padding: 2.5rem 3rem;
   width: 460px;
   text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 1;
 }
@@ -291,35 +386,60 @@ input[type="password"]:focus {
   color: #ffffff;
   margin-bottom: 0.5rem;
 }
-.logo span { color: #fbbf24; }
-.tagline { color: rgba(255,255,255,0.75); margin-bottom: 2rem; font-size: 0.95rem; font-weight: 700; }
+.logo span {
+  color: #fbbf24;
+}
+.tagline {
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
 
 .active-banner {
-  background: rgba(16,185,129,0.15);
-  border: 1.5px solid rgba(16,185,129,0.5);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1.5px solid rgba(16, 185, 129, 0.5);
   border-radius: 10px;
   padding: 0.85rem 1rem;
   margin-bottom: 1.25rem;
   font-size: 0.85rem;
   text-align: left;
 }
-.active-banner p { margin-bottom: 0.6rem; color: rgba(255,255,255,0.9); font-weight: 700; }
-.active-banner .btn { width: 100%; }
+.active-banner p {
+  margin-bottom: 0.6rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+}
+.active-banner .btn {
+  width: 100%;
+}
 
-.button-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
-.hidden { display: none !important; }
+.button-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.hidden {
+  display: none !important;
+}
 
-#join-panel { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-#join-panel input { flex: 1; }
+#join-panel {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+#join-panel input {
+  flex: 1;
+}
 
 .status-area {
   margin-top: 1.25rem;
   padding: 0.6rem 1rem;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 700;
 }
 
@@ -346,17 +466,27 @@ input[type="password"]:focus {
   margin: 1rem 0;
   box-shadow: var(--shadow-sm);
 }
-.hint { color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; font-weight: 700; }
+.hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  font-weight: 700;
+}
 
 .spinner {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   border: 4px solid var(--surface2);
   border-top-color: var(--purple);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 2rem auto 0;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ── Game Header ──────────────────────────────────────────── */
 .game-header {
@@ -385,9 +515,16 @@ input[type="password"]:focus {
   font-weight: 900;
   box-shadow: var(--shadow-sm);
 }
-.stage-info { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-weight: 800; }
+.stage-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
 .progress-bar-wrap {
-  width: 160px; height: 10px;
+  width: 160px;
+  height: 10px;
   background: var(--white);
   border: 2px solid var(--black);
   border-radius: 20px;
@@ -426,7 +563,11 @@ input[type="password"]:focus {
 }
 
 /* ── Code Panel ───────────────────────────────────────────── */
-.panel-code { padding: 1rem; gap: 0.75rem; background: #fafafa; }
+.panel-code {
+  padding: 1rem;
+  gap: 0.75rem;
+  background: #fafafa;
+}
 
 .mission-brief {
   background: #fff9e6;
@@ -437,12 +578,30 @@ input[type="password"]:focus {
   flex-shrink: 0;
   box-shadow: var(--shadow-sm);
 }
-.mission-brief h3 { color: var(--purple); margin-bottom: 0.35rem; font-size: 0.95rem; font-weight: 900; }
-.mission-brief p { color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 700; }
-.mission-brief ul { padding-left: 1.25rem; color: var(--text); font-weight: 700; }
-.mission-brief li { margin-bottom: 0.2rem; }
+.mission-brief h3 {
+  color: var(--purple);
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+.mission-brief p {
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+.mission-brief ul {
+  padding-left: 1.25rem;
+  color: var(--text);
+  font-weight: 700;
+}
+.mission-brief li {
+  margin-bottom: 0.2rem;
+}
 
-.editor-wrap { flex: 1; overflow: hidden; }
+.editor-wrap {
+  flex: 1;
+  overflow: hidden;
+}
 #code-editor {
   width: 100%;
   height: 100%;
@@ -451,7 +610,7 @@ input[type="password"]:focus {
   border: 2px solid var(--black);
   border-radius: 10px;
   padding: 1rem;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 0.9rem;
   line-height: 1.6;
   resize: none;
@@ -459,7 +618,10 @@ input[type="password"]:focus {
   tab-size: 4;
 }
 
-.console-wrap { flex-shrink: 0; height: 110px; }
+.console-wrap {
+  flex-shrink: 0;
+  height: 110px;
+}
 .console {
   background: #1e1b2e;
   border: 2px solid var(--black);
@@ -470,13 +632,17 @@ input[type="password"]:focus {
   height: 100%;
   overflow-y: auto;
   white-space: pre-wrap;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-weight: 700;
 }
-.console.error { color: var(--red); }
+.console.error {
+  color: var(--red);
+}
 
 /* ── Campus Panel ─────────────────────────────────────────── */
-.panel-campus { gap: 0; }
+.panel-campus {
+  gap: 0;
+}
 
 .campus-wrap {
   flex: 1;
@@ -514,11 +680,26 @@ input[type="password"]:focus {
   flex-direction: column;
   gap: 0.3rem;
 }
-.chat-messages.small { font-size: 0.75rem; max-height: 100px; }
-.chat-msg { display: flex; gap: 0.5rem; }
-.chat-msg .sender { color: var(--purple); font-weight: 900; }
-.chat-msg .text { color: var(--text); font-weight: 700; }
-.chat-msg.system .text { color: var(--text-muted); font-style: italic; }
+.chat-messages.small {
+  font-size: 0.75rem;
+  max-height: 100px;
+}
+.chat-msg {
+  display: flex;
+  gap: 0.5rem;
+}
+.chat-msg .sender {
+  color: var(--purple);
+  font-weight: 900;
+}
+.chat-msg .text {
+  color: var(--text);
+  font-weight: 700;
+}
+.chat-msg.system .text {
+  color: var(--text-muted);
+  font-style: italic;
+}
 
 .chat-input-row {
   display: flex;
@@ -528,13 +709,15 @@ input[type="password"]:focus {
   flex-shrink: 0;
   background: var(--surface2);
 }
-.chat-input-row input { flex: 1; }
+.chat-input-row input {
+  flex: 1;
+}
 
 /* ── Modals ───────────────────────────────────────────────── */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -550,8 +733,18 @@ input[type="password"]:focus {
   text-align: center;
   box-shadow: var(--shadow);
 }
-.modal-box h2 { margin-bottom: 0.5rem; color: var(--purple); font-family: var(--font-display); font-size: 1.4rem; }
-.modal-box p { color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem; font-weight: 700; }
+.modal-box h2 {
+  margin-bottom: 0.5rem;
+  color: var(--purple);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+}
+.modal-box p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
 .status-row {
   display: flex;
@@ -561,8 +754,16 @@ input[type="password"]:focus {
   font-size: 0.85rem;
   font-weight: 900;
 }
-.dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid var(--black); }
-.dot.green { background: var(--green); }
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid var(--black);
+}
+.dot.green {
+  background: var(--green);
+}
 .dot.spin {
   border: 3px solid var(--surface2);
   border-top-color: var(--orange);
@@ -570,8 +771,16 @@ input[type="password"]:focus {
   background: transparent;
 }
 
-.celebrate h2 { color: var(--green); font-size: 1.6rem; }
-#complete-score { color: var(--text-muted); margin: 0.75rem 0 1.25rem; font-size: 0.9rem; font-weight: 700; }
+.celebrate h2 {
+  color: var(--green);
+  font-size: 1.6rem;
+}
+#complete-score {
+  color: var(--text-muted);
+  margin: 0.75rem 0 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
 /* ── Game Complete ────────────────────────────────────────── */
 .complete-card {
@@ -588,11 +797,16 @@ input[type="password"]:focus {
   margin-bottom: 1rem;
   color: var(--black);
 }
-#final-score { color: var(--purple); margin: 1rem 0 2rem; font-weight: 900; font-size: 1.1rem; }
+#final-score {
+  color: var(--purple);
+  margin: 1rem 0 2rem;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
 
 /* ── Hero Background Screens ─────────────────────────────── */
 .hero-bg-screen {
-  background-image: url('/images/Bckground.jpeg');
+  background-image: url("/images/Bckground.jpeg");
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -608,10 +822,10 @@ input[type="password"]:focus {
   inset: 0;
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.15) 0%,
-    rgba(0,0,0,0.15) 40%,
-    rgba(10,8,30,0.65) 65%,
-    rgba(10,8,30,0.80) 100%
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(10, 8, 30, 0.65) 65%,
+    rgba(10, 8, 30, 0.8) 100%
   );
   z-index: 0;
 }
@@ -639,19 +853,23 @@ input[type="password"]:focus {
   font-family: var(--font-display);
   font-size: 2.6rem;
   color: #ffffff;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 0 40px rgba(250,204,21,0.3);
+  text-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(250, 204, 21, 0.3);
   letter-spacing: 0.04em;
   margin-bottom: 0.3rem;
   line-height: 1.1;
 }
 
-.hero-title-big span { color: #fbbf24; }
+.hero-title-big span {
+  color: #fbbf24;
+}
 
 .hero-tagline {
   font-size: 0.95rem;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 700;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* Glass morphism card */
@@ -659,35 +877,50 @@ input[type="password"]:focus {
   background: rgba(10, 8, 35, 0.62) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
-  border: 1.5px solid rgba(255,255,255,0.18) !important;
-  box-shadow: 0 8px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    0 8px 48px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   width: 380px !important;
   max-width: 90vw;
 }
 
-.glass-box .form-welcome   { color: #ffffff !important; font-size: 1.1rem; }
-.glass-box .form-sub       { color: rgba(255,255,255,0.65) !important; }
-.glass-box .tagline        { color: rgba(255,255,255,0.82) !important; }
-.glass-box .logo           { color: #fbbf24 !important; }
-.glass-box strong          { color: #ffffff !important; }
+.glass-box .form-welcome {
+  color: #ffffff !important;
+  font-size: 1.1rem;
+}
+.glass-box .form-sub {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+.glass-box .tagline {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+.glass-box .logo {
+  color: #fbbf24 !important;
+}
+.glass-box strong {
+  color: #ffffff !important;
+}
 
 .glass-box input[type="text"],
 .glass-box input[type="password"] {
-  background: rgba(255,255,255,0.1) !important;
-  border: 1.5px solid rgba(255,255,255,0.25) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
   color: #ffffff !important;
 }
-.glass-box input::placeholder { color: rgba(255,255,255,0.5) !important; }
+.glass-box input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
 .glass-box input:focus {
   border-color: #fbbf24 !important;
-  background: rgba(255,255,255,0.16) !important;
-  box-shadow: 0 0 0 3px rgba(251,191,36,0.2) !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2) !important;
 }
 
 .glass-box .auth-tab:not(.active) {
-  background: rgba(255,255,255,0.08) !important;
-  color: rgba(255,255,255,0.6) !important;
-  border-color: rgba(255,255,255,0.15) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 .glass-box .auth-tab.active {
   background: #7c3aed !important;
@@ -696,25 +929,27 @@ input[type="password"]:focus {
 }
 
 .glass-box .status-area {
-  background: rgba(255,255,255,0.07) !important;
-  border-color: rgba(255,255,255,0.15) !important;
-  color: rgba(255,255,255,0.6) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .glass-box .btn-secondary {
-  background: rgba(255,255,255,0.12) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
-  border-color: rgba(255,255,255,0.25) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
 }
 .glass-box .btn-secondary:hover {
-  background: rgba(255,255,255,0.2) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 .glass-box .active-banner {
-  background: rgba(16,185,129,0.15) !important;
-  border-color: rgba(16,185,129,0.5) !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
 }
-.glass-box .active-banner p { color: rgba(255,255,255,0.9) !important; }
+.glass-box .active-banner p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
 
 /* Lobby card centered on hero bg */
 #screen-lobby.hero-bg-screen {
@@ -724,11 +959,13 @@ input[type="password"]:focus {
   position: relative;
   z-index: 1;
 }
-#screen-lobby .lobby-header { margin-bottom: 0.5rem; }
+#screen-lobby .lobby-header {
+  margin-bottom: 0.5rem;
+}
 
 /* ── Lobby Screen Background ─────────────────────────────── */
 .lobby-bg-screen {
-  background-image: url('../public/images/Background.jpeg');
+  background-image: url("../public/images/Background.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -736,7 +973,7 @@ input[type="password"]:focus {
 }
 
 .lobby-bg-screen::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(10, 5, 30, 0.75);

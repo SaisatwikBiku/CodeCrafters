@@ -1,75 +1,78 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AUTH } from '@/lib/auth';
-import { SERVER_URL } from '@/app/CONSTANT';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AUTH } from "@/lib/auth";
+import { SERVER_URL } from "@/app/CONSTANT";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<'login' | 'register'>('login');
+  const [tab, setTab] = useState<"login" | "register">("login");
 
   // Login state
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Register state
-  const [regUsername, setRegUsername] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [regError, setRegError] = useState('');
+  const [regUsername, setRegUsername] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regError, setRegError] = useState("");
   const [regLoading, setRegLoading] = useState(false);
 
   const handleLogin = async () => {
-    setLoginError('');
+    setLoginError("");
     if (!loginUsername || !loginPassword) {
-      setLoginError('Please fill in all fields.');
+      setLoginError("Please fill in all fields.");
       return;
     }
     setLoginLoading(true);
     try {
       const res = await fetch(`${SERVER_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: loginUsername,
+          password: loginPassword,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setLoginError(data.error || 'Login failed.');
+        setLoginError(data.error || "Login failed.");
         return;
       }
       AUTH.setAuth(data.token, data.username);
-      router.push('/lobby');
+      router.push("/lobby");
     } catch {
-      setLoginError('Could not connect to server.');
+      setLoginError("Could not connect to server.");
     } finally {
       setLoginLoading(false);
     }
   };
 
   const handleRegister = async () => {
-    setRegError('');
+    setRegError("");
     if (!regUsername || !regPassword) {
-      setRegError('Please fill in all fields.');
+      setRegError("Please fill in all fields.");
       return;
     }
     setRegLoading(true);
     try {
       const res = await fetch(`${SERVER_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: regUsername, password: regPassword }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setRegError(data.error || 'Registration failed.');
+        setRegError(data.error || "Registration failed.");
         return;
       }
       AUTH.setAuth(data.token, data.username);
-      router.push('/lobby');
+      router.push("/lobby");
     } catch {
-      setRegError('Could not connect to server.');
+      setRegError("Could not connect to server.");
     } finally {
       setRegLoading(false);
     }
@@ -83,43 +86,51 @@ export default function LoginPage() {
       {/* RIGHT: Dark purple auth panel */}
       <div className="auth-side">
         {/* Branding + feature list */}
-        <div className="hero-inner" style={{ width: '100%', maxWidth: 380 }}>
+        <div className="hero-inner" style={{ width: "100%", maxWidth: 380 }}>
           <h1 className="hero-title">
             Code<span>Crafters!</span>
           </h1>
-          <p className="hero-sub">Collaborate. Code. Build Your Campus together.</p>
+          <p className="hero-sub">
+            Collaborate. Code. Build Your Campus together.
+          </p>
           <div className="hero-blocks">
             <div className="hero-block">🧱 Play as Architect or Builder</div>
             <div className="hero-block">🐍 Learn Python step by step</div>
             <div className="hero-block">🏆 5 stages · 500 points</div>
             <div className="hero-block">💬 Chat with your partner</div>
           </div>
-          <div className="hero-roles" style={{ marginBottom: '1.5rem' }}>
+          <div className="hero-roles" style={{ marginBottom: "1.5rem" }}>
             <div className="role-chip yellow">🧱 Architect</div>
             <div className="role-chip purple">🔨 Builder</div>
           </div>
         </div>
 
         {/* Auth box */}
-        <div className="auth-box" style={{ width: '100%', maxWidth: 380 }}>
+        <div className="auth-box" style={{ width: "100%", maxWidth: 380 }}>
           {/* Tabs */}
           <div className="auth-tabs">
             <button
-              className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
-              onClick={() => { setTab('login'); setLoginError(''); }}
+              className={`auth-tab ${tab === "login" ? "active" : ""}`}
+              onClick={() => {
+                setTab("login");
+                setLoginError("");
+              }}
             >
               Login
             </button>
             <button
-              className={`auth-tab ${tab === 'register' ? 'active' : ''}`}
-              onClick={() => { setTab('register'); setRegError(''); }}
+              className={`auth-tab ${tab === "register" ? "active" : ""}`}
+              onClick={() => {
+                setTab("register");
+                setRegError("");
+              }}
             >
               Register
             </button>
           </div>
 
           {/* Login Form */}
-          {tab === 'login' && (
+          {tab === "login" && (
             <div>
               <p className="form-welcome">Ready to play? 🎮</p>
               <p className="form-sub">Login to jump back in!</p>
@@ -130,7 +141,7 @@ export default function LoginPage() {
                   maxLength={24}
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 />
               </div>
               <div className="form-group">
@@ -139,23 +150,23 @@ export default function LoginPage() {
                   placeholder="🔒  Password"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 />
               </div>
               <button
                 className="btn btn-primary"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 disabled={loginLoading}
                 onClick={handleLogin}
               >
-                {loginLoading ? 'Logging in...' : '▶ PLAY NOW!'}
+                {loginLoading ? "Logging in..." : "▶ PLAY NOW!"}
               </button>
               {loginError && <div className="auth-error">{loginError}</div>}
             </div>
           )}
 
           {/* Register Form */}
-          {tab === 'register' && (
+          {tab === "register" && (
             <div>
               <p className="form-welcome">Join the fun! 🎉</p>
               <p className="form-sub">Create your free account!</p>
@@ -166,7 +177,7 @@ export default function LoginPage() {
                   maxLength={24}
                   value={regUsername}
                   onChange={(e) => setRegUsername(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
+                  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
                 />
               </div>
               <div className="form-group">
@@ -175,16 +186,16 @@ export default function LoginPage() {
                   placeholder="🔒  Password (min 6 chars)"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
+                  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
                 />
               </div>
               <button
                 className="btn btn-primary"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 disabled={regLoading}
                 onClick={handleRegister}
               >
-                {regLoading ? 'Registering...' : "🚀 Let's Go!"}
+                {regLoading ? "Registering..." : "🚀 Let's Go!"}
               </button>
               {regError && <div className="auth-error">{regError}</div>}
             </div>

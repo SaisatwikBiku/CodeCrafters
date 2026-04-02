@@ -1,13 +1,17 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { GameProvider } from '@/lib/game-context';
+import type { Metadata } from "next";
+import "./globals.css";
+import { GameProvider } from "@/lib/game-context";
 
 export const metadata: Metadata = {
-  title: 'CodeCrafters 🏫',
-  description: 'Collaborate. Code. Build Your Campus together.',
+  title: "CodeCrafters 🏫",
+  description: "Collaborate. Code. Build Your Campus together.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>
