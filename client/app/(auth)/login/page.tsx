@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AUTH } from "@/lib/auth";
 import { SERVER_URL } from "@/app/CONSTANT";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<"login" | "register">("login");
+
+  const inviteSessionId = (searchParams.get("sessionId") || AUTH.getPendingInviteSessionId() || "").trim().toUpperCase();
 
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -41,7 +44,12 @@ export default function LoginPage() {
         return;
       }
       AUTH.setAuth(data.token, data.username);
-      router.push("/lobby");
+      if (inviteSessionId) {
+        AUTH.setPendingInviteSessionId(inviteSessionId);
+        router.push(`/lobby?sessionId=${encodeURIComponent(inviteSessionId)}`);
+      } else {
+        router.push("/lobby");
+      }
     } catch {
       setLoginError("Could not connect to server.");
     } finally {
@@ -68,7 +76,12 @@ export default function LoginPage() {
         return;
       }
       AUTH.setAuth(data.token, data.username);
-      router.push("/lobby");
+      if (inviteSessionId) {
+        AUTH.setPendingInviteSessionId(inviteSessionId);
+        router.push(`/lobby?sessionId=${encodeURIComponent(inviteSessionId)}`);
+      } else {
+        router.push("/lobby");
+      }
     } catch {
       setRegError("Could not connect to server.");
     } finally {

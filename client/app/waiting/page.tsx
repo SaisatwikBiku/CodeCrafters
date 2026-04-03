@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense, useRef } from "react";
+import { useEffect, Suspense, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AUTH } from "@/lib/auth";
 import { useGame } from "@/lib/game-context";
@@ -12,9 +12,25 @@ function WaitingContent() {
   const { state, updateState } = useGame();
   const transitioningRef = useRef(false);
   const socketRef = useRef<any>(null);
+  const [copied, setCopied] = useState(false);
 
   const sessionId = searchParams.get("sessionId") || state.sessionId || "------";
   const role = searchParams.get("role") || state.role || "Architect";
+  const shareLink =
+    typeof window !== "undefined" && sessionId && sessionId !== "------"
+      ? `${window.location.origin}/lobby?sessionId=${encodeURIComponent(sessionId)}`
+      : "";
+
+  const copyShareLink = async () => {
+    if (!shareLink) return;
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      alert("Could not copy link. Please copy it manually.");
+    }
+  };
 
   useEffect(() => {
     if (!AUTH.isLoggedIn()) { router.replace("/login"); return; }
@@ -108,6 +124,24 @@ function WaitingContent() {
           style={{ fontFamily: "var(--font-display)" }}
         >
           {sessionId}
+        </div>
+
+        <div className="mt-3 text-left">
+          <p className="text-[var(--text-muted)] text-[0.8rem] font-bold mb-2">Share this link</p>
+          <div className="flex gap-2">
+            <input
+              readOnly
+              value={shareLink}
+              className="flex-1 bg-white border-2 border-[#1a1a1a] rounded-[8px] px-3 py-2 text-[0.75rem] font-bold text-[var(--text)]"
+            />
+            <button
+              onClick={copyShareLink}
+              className="flex-none py-2 px-3 bg-[#7c3aed] text-white border-2 border-[#1a1a1a] rounded-[8px] font-[900] text-[0.78rem] shadow-[var(--shadow-sm)] hover:-translate-y-0.5 transition-[transform] duration-100"
+              style={{ fontFamily: "var(--font)" }}
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
         </div>
 
         <p className="text-[var(--text-muted)] text-[0.85rem] mt-4 font-bold">

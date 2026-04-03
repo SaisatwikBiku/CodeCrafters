@@ -1,4 +1,6 @@
 export const AUTH = {
+  PENDING_INVITE_KEY: "cc_pending_invite_session",
+
   getToken: (): string | null => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("cc_token");
@@ -26,5 +28,17 @@ export const AUTH = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
+  },
+  setPendingInviteSessionId: (sessionId: string): void => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("cc_pending_invite_session", sessionId.toUpperCase());
+  },
+  getPendingInviteSessionId: (): string | null => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("cc_pending_invite_session");
+  },
+  clearPendingInviteSessionId: (): void => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("cc_pending_invite_session");
   },
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AUTH } from "@/lib/auth";
 import { useGame } from "@/lib/game-context";
 import { ActiveSession } from "@/types";
@@ -9,6 +9,7 @@ import { SERVER_URL } from "../CONSTANT";
 
 export default function LobbyPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { updateState } = useGame();
 
   const [username, setUsername] = useState("");
@@ -18,9 +19,20 @@ export default function LobbyPage() {
   const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [createLoading, setCreateLoading] = useState(false);
   const [joinLoading, setJoinLoading] = useState(false);
+  const [inviteHandled, setInviteHandled] = useState(false);
+
+  const inviteSessionId = (searchParams.get("sessionId") || AUTH.getPendingInviteSessionId() || "").trim().toUpperCase();
 
   useEffect(() => {
-    if (!AUTH.isLoggedIn()) { router.replace("/login"); return; }
+    if (!AUTH.isLoggedIn()) {
+      if (inviteSessionId) {
+        AUTH.setPendingInviteSessionId(inviteSessionId);
+        router.replace(`/login?sessionId=${encodeURIComponent(inviteSessionId)}`);
+      } else {
+        router.replace("/login");
+      }
+      return;
+    }
     setUsername(AUTH.getUsername() || "");
     const fetchActive = async () => {
       try {
@@ -32,7 +44,14 @@ export default function LobbyPage() {
       } catch { /* ignore */ }
     };
     fetchActive();
-  }, [router]);
+  }, [router, inviteSessionId]);
+
+  useEffect(() => {
+    if (!inviteSessionId) return;
+    setShowJoinPanel(true);
+    setSessionInput(inviteSessionId);
+    setStatus("Status: Invite link detected. Joining...");
+  }, [inviteSessionId]);
 
   const handleLogout = () => { AUTH.clearAuth(); router.push("/login"); };
 
@@ -51,7 +70,7 @@ export default function LobbyPage() {
   };
 
   const handleJoin = async () => {
-    const id = sessionInput.trim().toUpperCase();
+    const id = (sessionInput || inviteSessionId).trim().toUpperCase();
     if (!id || id.length < 6) { alert("Enter a valid session ID!"); return; }
     setJoinLoading(true);
     setStatus("Status: Joining...");
@@ -61,12 +80,25 @@ export default function LobbyPage() {
       });
       const data = await res.json();
       if (!res.ok) { alert(data.error || "Could not join session."); setStatus("Status: Ready"); return; }
+      AUTH.clearPendingInviteSessionId();
       updateState({ playerName: AUTH.getUsername(), sessionId: data.sessionId, role: data.role, currentStage: data.stage });
       router.push("/game");
     } catch {
       alert("Could not connect to server."); setStatus("Status: Ready");
     } finally { setJoinLoading(false); }
   };
+
+  useEffect(() => {
+    if (!inviteSessionId || inviteHandled || joinLoading) return;
+    if (!AUTH.isLoggedIn()) return;
+    if (activeSession?.id && activeSession.id !== inviteSessionId) {
+      setInviteHandled(true);
+      setStatus("Status: You already have an active game. Rejoin it first.");
+      return;
+    }
+    setInviteHandled(true);
+    handleJoin();
+  }, [inviteSessionId, inviteHandled, joinLoading, activeSession]); // eslint-disable-line
 
   const handleRejoin = async () => {
     if (!activeSession) return;
