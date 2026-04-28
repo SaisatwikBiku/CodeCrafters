@@ -12,11 +12,13 @@ import StageCompleteModal from "@/components/game/StageCompleteModal";
 import { SERVER_URL } from "../CONSTANT";
 import {
   Layers, Hammer, Bot, Sparkles, Play, Loader2,
-  Send, AlertTriangle, X, LogOut,
+  Send, AlertTriangle, X, LogOut, Volume2, VolumeX,
   BookOpen, GraduationCap, Utensils, FlaskConical, Activity,
   CheckCircle2,
   type LucideIcon,
 } from "lucide-react";
+import { SFX } from "@/lib/sfx";
+import { Music } from "@/lib/music";
 
 const CampusCanvas = dynamic(() => import("@/components/campus/CampusCanvas"), { ssr: false });
 
@@ -63,7 +65,10 @@ export default function GamePage() {
   const [showWaiting, setShowWaiting] = useState(false);
   const [stageComplete, setStageComplete] = useState<{ stage: number; score: number; nextStage: number } | null>(null);
   const [partnerDisconnected, setPartnerDisconnected] = useState(false);
+  const [partnerFinishedBanner, setPartnerFinishedBanner] = useState(false);
   const [leaveLoading, setLeaveLoading] = useState(false);
+  const [muted, setMuted] = useState(false);
+  useEffect(() => { setMuted(SFX.isMuted()); }, []);
 
   const socketRef = useRef<any>(state.socket);
   socketRef.current = state.socket;
@@ -100,6 +105,8 @@ export default function GamePage() {
     if (!AUTH.isLoggedIn()) { router.replace("/login"); return; }
     if (!state.sessionId || !state.role) { router.replace("/lobby"); return; }
     loadStage(state.currentStage);
+    Music.play("coding");
+    return () => { Music.stop(); };
   }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -140,15 +147,22 @@ export default function GamePage() {
       });
       socket.on("partner_status", ({ ready, allReady }: any) => {
         if (ready && !allReady) {
-          setMessages((prev) => [...prev, { id: uid(), sender: "", message: "Your partner finished — hang tight!", isSystem: true }]);
+          Music.setState("pressure");
+          if (state.isAI) {
+            setMessages((prev) => [...prev, { id: uid(), sender: "", message: "Your partner finished — hang tight!", isSystem: true }]);
+          } else {
+            setPartnerFinishedBanner(true);
+          }
         }
       });
       socket.on("stage_complete", ({ completedStage, nextStage, score }: any) => {
+        SFX.stageComplete();
         updateState({ completedStages: completedStage, score, currentStage: nextStage });
         setShowWaiting(false);
         setStageComplete({ stage: completedStage, score, nextStage });
       });
       socket.on("game_complete", ({ state: gameState }: any) => {
+        SFX.gameComplete();
         setShowWaiting(false);
         updateState({ score: gameState.score, completedStages: 5 });
         router.push("/complete");
@@ -190,18 +204,26 @@ export default function GamePage() {
         body: JSON.stringify({ source_code: code, expected_output: task.expected_output }),
       });
       const data = await res.json();
-      if (data.stderr) { setConsoleText(data.stderr); setConsoleError(true); }
-      else { setConsoleText(data.stdout || "(no output)"); }
+      if (data.stderr) {
+        setConsoleText(data.stderr);
+        setConsoleError(true);
+        SFX.error();
+      } else {
+        setConsoleText(data.stdout || "(no output)");
+      }
       const passed = task.expected_output === null ? data.status === "Accepted" : data.passed;
       if (passed) {
+        SFX.correct();
         setConsolePassed(true);
         setConsoleText((prev) => prev + "\n\nCorrect! Waiting for your partner...");
         setShowWaiting(true);
         socketRef.current?.emit("task_complete", { sessionId: state.sessionId, role: state.role });
       } else if (!data.stderr) {
+        SFX.wrong();
         setConsoleText((prev) => prev + "\n\nNot quite — check your output and try again!");
       }
     } catch {
+      SFX.error();
       setConsoleText("Error: Could not reach code runner.");
       setConsoleError(true);
     } finally { setRunning(false); }
@@ -217,6 +239,8 @@ export default function GamePage() {
   const handleNextLevel = () => {
     const next = stageComplete?.nextStage ?? state.currentStage;
     setStageComplete(null);
+    setPartnerFinishedBanner(false);
+    Music.setState("coding");
     loadStage(next);
   };
 
@@ -292,6 +316,17 @@ export default function GamePage() {
             {state.score} XP
           </span>
           <button
+            onClick={() => {
+              const next = SFX.toggleMute(); // writes shared sound_muted key
+              Music.setMuted(next);
+              setMuted(next);
+            }}
+            title={muted ? "Unmute sound" : "Mute sound"}
+            className="flex items-center gap-1 text-[11px] font-black px-2.5 py-1.5 bg-[#1a1a1a]/10 border border-[#1a1a1a]/30 rounded-lg text-[#1a1a1a]/60 hover:bg-[#1a1a1a]/20 hover:text-[#1a1a1a] transition-all"
+          >
+            {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+          </button>
+          <button
             onClick={handleLeave}
             disabled={leaveLoading}
             className="flex items-center gap-1 text-[11px] font-black px-3 py-1.5 bg-[#1a1a1a]/10 border border-[#1a1a1a]/30 rounded-lg text-[#1a1a1a]/60 hover:bg-[#1a1a1a]/20 hover:text-[#1a1a1a] transition-all disabled:opacity-40"
@@ -346,6 +381,16 @@ export default function GamePage() {
                     </li>
                   ))}
                 </ol>
+                {currentTask.expected_output !== null && (
+                  <div className="mt-3 rounded-lg overflow-hidden border border-[#22c55e]/40">
+                    <div className="px-2.5 py-1 bg-[#22c55e]/15 border-b border-[#22c55e]/30">
+                      <span className="text-[9px] font-black tracking-wider text-[#15803d]">EXPECTED OUTPUT</span>
+                    </div>
+                    <pre className="px-3 py-2 text-[0.75rem] font-['Courier_New',monospace] font-bold text-[#15803d] bg-[#f0fdf4] leading-relaxed whitespace-pre-wrap">
+                      {currentTask.expected_output}
+                    </pre>
+                  </div>
+                )}
               </div>
             ) : null}
           </div>
@@ -442,16 +487,31 @@ export default function GamePage() {
           )}
 
           {/* Campus canvas */}
-          <div className="flex-1 bg-[#e0f2fe] flex items-stretch justify-stretch overflow-hidden border-b-2 border-[#1a1a1a] relative">
+          <div className={`flex-1 bg-[#e0f2fe] flex items-stretch justify-stretch overflow-hidden ${state.isAI ? "border-b-2 border-[#1a1a1a]" : ""} relative`}>
             <CampusCanvas completedStages={state.completedStages} style={{ width: "100%", height: "100%" }} />
             <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-white/90 border-2 border-[#1a1a1a] rounded-xl px-3 py-1.5 text-[11px] font-black text-[#1a1a1a] shadow-[var(--shadow-sm)]">
               <stageBuilding.Icon size={12} />
               {stageBuilding.name}
             </div>
+            {/* Multiplayer: partner finished banner (overlay on canvas) */}
+            {!state.isAI && partnerFinishedBanner && (
+              <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-[#f59e0b] shadow-lg"
+                style={{ background: "rgba(254,243,199,0.97)" }}>
+                <span className="text-lg">⏳</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-black text-[#92400e]">Your partner finished!</p>
+                  <p className="text-[11px] font-bold text-[#a16207]">Hurry up — they're waiting for you.</p>
+                </div>
+                <button onClick={() => setPartnerFinishedBanner(false)} className="text-[#92400e]/50 hover:text-[#92400e] transition-colors flex-shrink-0">
+                  <X size={14} />
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Chat panel */}
-          <div className={`flex-shrink-0 ${state.isAI ? "h-[290px]" : "h-[195px]"} border-t-2 border-[#1a1a1a] flex flex-col bg-white`}>
+          {/* AI Study Buddy chat — multiplayer mode hides this entirely */}
+          {state.isAI && (
+          <div className="flex-shrink-0 h-[290px] border-t-2 border-[#1a1a1a] flex flex-col bg-white">
             {/* Chat header */}
             <div className="flex items-center gap-2 px-4 py-2 border-b border-[#e5e7eb] bg-[#f8f7ff] flex-shrink-0">
               <Bot size={15} className="text-[#7c3aed]" />
@@ -505,6 +565,7 @@ export default function GamePage() {
               </button>
             </div>
           </div>
+          )}
         </section>
       </main>
     </>

@@ -4,11 +4,40 @@ import { useGame } from "@/lib/game-context";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
-  Users, Bot, Layers, Building2, Home,
+  Users, Bot, Layers, Building2, Home, Hammer,
   BookOpen, GraduationCap, Utensils, FlaskConical, Activity,
-  Rocket, Loader2, X, Check,
+  Rocket, Loader2, X, Check, Link2, LogIn,
   type LucideIcon,
 } from "lucide-react";
+
+const ROLES: {
+  id: "Architect" | "Builder";
+  name: string;
+  Icon: LucideIcon;
+  tagline: string;
+  desc: string;
+  color: string;
+  bg: string;
+}[] = [
+  {
+    id: "Architect",
+    name: "Architect",
+    Icon: Layers,
+    tagline: "Design the Blueprint",
+    desc: "You decide WHAT to build — name variables, define structure, and set the plan.",
+    color: "#fbbf24",
+    bg: "linear-gradient(135deg, #3d2e00 0%, #1c1500 100%)",
+  },
+  {
+    id: "Builder",
+    name: "Builder",
+    Icon: Hammer,
+    tagline: "Write the Code",
+    desc: "You decide HOW to build it — write Python code that brings the Architect's plan to life.",
+    color: "#a78bfa",
+    bg: "linear-gradient(135deg, #2d1b6b 0%, #130d30 100%)",
+  },
+];
 
 const LEVELS: {
   id: number;
@@ -61,16 +90,57 @@ export default function StartGameModal({
   const { updateState } = useGame();
 
   const [playMode, setPlayMode] = useState<"friend" | "ai" | "">("");
+  const [friendMode, setFriendMode] = useState<"create" | "join" | "">("");
+  const [joinCode, setJoinCode] = useState("");
+  const [selectedRole, setSelectedRole] = useState<"Architect" | "Builder" | "">("");
   const [selectedLevel, setSelectedLevel] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const canStart = playMode !== "" && selectedLevel !== 0;
+  const isJoining  = playMode === "friend" && friendMode === "join";
+  const isCreating = playMode === "ai" || (playMode === "friend" && friendMode === "create");
+  const canStart   = isJoining
+    ? joinCode.trim().length >= 6
+    : isCreating && selectedRole !== "" && selectedLevel !== 0;
+
   const selectedBuildingData = BUILDINGS.find((b) => b.id === preselectedBuilding);
 
-  const handleClose = () => { setPlayMode(""); setSelectedLevel(0); handleModal(false); };
+  const handleClose = () => {
+    setPlayMode(""); setFriendMode(""); setJoinCode("");
+    setSelectedRole(""); setSelectedLevel(0);
+    handleModal(false);
+  };
+
+  const handleJoinRoom = async () => {
+    const id = joinCode.trim().toUpperCase();
+    setLoading(true);
+    try {
+      const res = await fetch(`${SERVER_URL}/api/game/join`, {
+        method: "POST",
+        headers: AUTH.authHeaders(),
+        body: JSON.stringify({ sessionId: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Could not join session."); return; }
+      updateState({
+        playerName: AUTH.getUsername(),
+        sessionId: data.sessionId,
+        role: data.role,
+        currentStage: data.stage,
+        level: (data.level ?? 1) as 1 | 2 | 3,
+        completedStages: Math.max(0, (data.stage ?? 1) - 1),
+        isAI: false,
+      });
+      router.push("/game");
+    } catch {
+      alert("Could not connect to server.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleStartBuilding = async () => {
     if (!canStart) return;
+    if (isJoining) { await handleJoinRoom(); return; }
     setLoading(true);
     try {
       const startStage = Math.max(1, BUILDINGS.findIndex((b) => b.id === preselectedBuilding) + 1);
@@ -78,7 +148,7 @@ export default function StartGameModal({
       const res = await fetch(`${SERVER_URL}${endpoint}`, {
         method: "POST",
         headers: AUTH.authHeaders(),
-        body: JSON.stringify({ startStage, level: selectedLevel }),
+        body: JSON.stringify({ startStage, level: selectedLevel, role: selectedRole }),
       });
       const data = await res.json();
       if (!res.ok) { alert(data.error || "Could not create session."); return; }
@@ -146,7 +216,7 @@ export default function StartGameModal({
             <h3 className="text-[11px] font-black tracking-widest text-white/40 mb-3">HOW DO YOU WANT TO PLAY?</h3>
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => setPlayMode("friend")}
+                onClick={() => { setPlayMode("friend"); setFriendMode(""); }}
                 className="rounded-2xl border-2 cursor-pointer p-5 text-left transition-all hover:scale-[1.02]"
                 style={{
                   background: "linear-gradient(135deg, #3b1d8e 0%, #1e1255 100%)",
@@ -157,7 +227,7 @@ export default function StartGameModal({
                 <Users size={28} className="mb-2 text-white/70" />
                 <div className="font-black text-[15px] mb-1">Play with a Friend</div>
                 <p className="text-white/50 text-[12px] leading-snug">
-                  Create a session, share your ID, and code together in real time.
+                  Create a room or join one with a code — play together in real time.
                 </p>
                 {playMode === "friend" && (
                   <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-[#7c6ff7] text-white">
@@ -189,7 +259,114 @@ export default function StartGameModal({
             </div>
           </div>
 
-          {/* Level */}
+          {/* Friend sub-mode: Create vs Join */}
+          {playMode === "friend" && (
+            <div>
+              <h3 className="text-[11px] font-black tracking-widest text-white/40 mb-3">CREATE OR JOIN?</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setFriendMode("create")}
+                  className="rounded-2xl border-2 cursor-pointer p-4 text-left transition-all hover:scale-[1.02]"
+                  style={{
+                    background: "linear-gradient(135deg, #1e3a5f 0%, #0f1f35 100%)",
+                    borderColor: friendMode === "create" ? "#60a5fa" : "transparent",
+                    boxShadow: friendMode === "create" ? "0 0 0 1px #60a5fa, 0 4px 20px rgba(96,165,250,0.25)" : "none",
+                  }}
+                >
+                  <Link2 size={22} className="mb-2 text-white/70" />
+                  <div className="font-black text-[14px] mb-0.5">Create a Room</div>
+                  <p className="text-white/45 text-[11px] leading-snug">Pick your role and level, then share the code with a friend.</p>
+                  {friendMode === "create" && (
+                    <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-[#60a5fa] text-[#0f172a]">
+                      <Check size={10} /> Selected
+                    </div>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setFriendMode("join")}
+                  className="rounded-2xl border-2 cursor-pointer p-4 text-left transition-all hover:scale-[1.02]"
+                  style={{
+                    background: "linear-gradient(135deg, #1a3a2a 0%, #0d1f15 100%)",
+                    borderColor: friendMode === "join" ? "#4ade80" : "transparent",
+                    boxShadow: friendMode === "join" ? "0 0 0 1px #4ade80, 0 4px 20px rgba(74,222,128,0.2)" : "none",
+                  }}
+                >
+                  <LogIn size={22} className="mb-2 text-white/70" />
+                  <div className="font-black text-[14px] mb-0.5">Join a Room</div>
+                  <p className="text-white/45 text-[11px] leading-snug">Enter the 8-character code your friend shared with you.</p>
+                  {friendMode === "join" && (
+                    <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-[#4ade80] text-[#0d1f15]">
+                      <Check size={10} /> Selected
+                    </div>
+                  )}
+                </button>
+              </div>
+
+              {/* Join code input */}
+              {friendMode === "join" && (
+                <div className="mt-4">
+                  <p className="text-[11px] text-white/40 font-bold mb-2">Enter the session code:</p>
+                  <input
+                    type="text"
+                    maxLength={8}
+                    placeholder="e.g. AB3F9X2K"
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                    onKeyDown={(e) => { if (e.key === "Enter" && canStart) handleStartBuilding(); }}
+                    className="w-full bg-white/8 border-2 border-white/15 rounded-xl px-4 py-3 text-white font-black text-[1.1rem] tracking-[0.25em] text-center outline-none placeholder:text-white/20 placeholder:tracking-normal focus:border-[#4ade80] focus:bg-white/12 transition-all"
+                    autoFocus
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Role Selection — shown for create flow only */}
+          {!isJoining && (
+          <div>
+            <h3 className="text-[11px] font-black tracking-widest text-white/40 mb-1">CHOOSE YOUR ROLE</h3>
+            <p className="text-[11px] text-white/30 font-bold mb-3">
+              {playMode === "ai"
+                ? "The AI will take the other role."
+                : "Your partner will be assigned the other role."}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {ROLES.map((role) => {
+                const isSelected = selectedRole === role.id;
+                const RoleIcon = role.Icon;
+                return (
+                  <button
+                    key={role.id}
+                    onClick={() => setSelectedRole(role.id)}
+                    className="rounded-2xl border-2 cursor-pointer p-5 text-left transition-all hover:scale-[1.02]"
+                    style={{
+                      background: role.bg,
+                      borderColor: isSelected ? role.color : "transparent",
+                      boxShadow: isSelected ? `0 0 0 1px ${role.color}, 0 4px 20px ${role.color}33` : "none",
+                    }}
+                  >
+                    <RoleIcon size={28} className="mb-2" style={{ color: role.color }} />
+                    <div className="font-black text-[15px] mb-0.5">{role.name}</div>
+                    <div className="text-[11px] font-black mb-1" style={{ color: role.color }}>{role.tagline}</div>
+                    <p className="text-white/50 text-[12px] leading-snug">{role.desc}</p>
+                    {isSelected && (
+                      <div
+                        className="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border border-[#1a1a1a]"
+                        style={{ background: role.color, color: role.id === "Architect" ? "#1a1a1a" : "#ffffff" }}
+                      >
+                        <Check size={10} /> Selected
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          )}
+
+          {/* Level — shown for create flow only */}
+          {!isJoining && (
           <div>
             <h3 className="text-[11px] font-black tracking-widest text-white/40 mb-3">CHOOSE YOUR DIFFICULTY</h3>
             <div className="grid grid-cols-3 gap-3">
@@ -231,6 +408,7 @@ export default function StartGameModal({
               })}
             </div>
           </div>
+          )}
 
           {/* Start Button */}
           <button
@@ -245,10 +423,14 @@ export default function StartGameModal({
             }}
           >
             {loading
-              ? <><Loader2 size={18} className="animate-spin" /> Creating Session...</>
+              ? <><Loader2 size={18} className="animate-spin" /> {isJoining ? "Joining..." : "Creating Session..."}</>
+              : isJoining && canStart
+              ? <><LogIn size={18} /> Join Room</>
               : canStart
-              ? <><Rocket size={18} /> Let&apos;s Build — {playMode === "ai" ? "Play with AI" : "Find a Partner"}</>
-              : "Select a mode and level to continue"}
+              ? <><Rocket size={18} /> Play as {selectedRole} — {playMode === "ai" ? "with AI" : "Find a Partner"}</>
+              : isJoining
+              ? "Enter a valid session code"
+              : "Select a mode, role, and level to continue"}
           </button>
         </div>
       </div>

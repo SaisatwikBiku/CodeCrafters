@@ -133,12 +133,15 @@ function registerSocketHandlers(io) {
 }
 
 async function advanceStage(io, room, sessionId, state) {
+  // Award XP for the stage that was just completed (applies to all stages including the last)
+  state.score += 100;
+
   if (state.stage >= TOTAL_STAGES) {
     state.completed = true;
     await setSessionState(sessionId, state);
 
     try {
-      await Session.updateOne({ _id: sessionId }, { $set: { completed: true } });
+      await Session.updateOne({ _id: sessionId }, { $set: { completed: true, score: state.score } });
     } catch (err) {
       console.error('[advanceStage] Failed to mark session completed in DB:', err.message);
     }
@@ -148,7 +151,6 @@ async function advanceStage(io, room, sessionId, state) {
   }
 
   state.stage += 1;
-  state.score += 100;
   if (state.players.Architect) state.players.Architect.ready = false;
   if (state.players.Builder) state.players.Builder.ready = false;
 

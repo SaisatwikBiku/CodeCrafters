@@ -19,11 +19,18 @@ function normalizeLevel(raw) {
   return Math.min(3, Math.max(1, Math.floor(n)));
 }
 
+function normalizeRole(raw) {
+  if (raw === 'Builder') return 'Builder';
+  return 'Architect'; // default
+}
+
 router.post('/create', authMiddleware, async (req, res) => {
   const { username, id: userId } = req.user;
   const sessionId = uuidv4().slice(0, 8).toUpperCase();
   const startStage = normalizeStartStage(req.body?.startStage);
   const level = normalizeLevel(req.body?.level);
+  const role = normalizeRole(req.body?.role);
+  const otherRole = role === 'Architect' ? 'Builder' : 'Architect';
 
   try {
     const initialState = {
@@ -32,16 +39,16 @@ router.post('/create', authMiddleware, async (req, res) => {
       level,
       score: 0,
       players: {
-        Architect: { name: username, userId, ready: false },
-        Builder: null,
+        [role]: { name: username, userId, ready: false },
+        [otherRole]: null,
       },
       chat: [],
     };
 
-    await Session.create({ _id: sessionId, stage: startStage, level, state: initialState });
-    await Player.create({ sessionId, userId, name: username, role: 'Architect' });
+    await Session.create({ _id: sessionId, stage: startStage, startStage, level, state: initialState });
+    await Player.create({ sessionId, userId, name: username, role });
 
-    res.json({ sessionId, role: 'Architect', stage: startStage, level });
+    res.json({ sessionId, role, stage: startStage, level });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create session' });
@@ -73,29 +80,32 @@ router.post('/join', authMiddleware, async (req, res) => {
       return res.json({ sessionId, role: 'Builder', stage: state.stage, level, rejoining: true });
     }
 
-    // New Builder joining
-    if (state.players.Builder) {
+    // New player joining — assign whichever role is still open
+    const openRole = !state.players.Architect ? 'Architect' : !state.players.Builder ? 'Builder' : null;
+    if (!openRole) {
       return res.status(400).json({ error: 'Session is full' });
     }
 
-    await Player.create({ sessionId, userId, name: username, role: 'Builder' });
+    await Player.create({ sessionId, userId, name: username, role: openRole });
 
-    state.players.Builder = { name: username, userId, ready: false };
+    state.players[openRole] = { name: username, userId, ready: false };
     await setSessionState(sessionId, state);
 
-    res.json({ sessionId, role: 'Builder', stage: state.stage, level, rejoining: false });
+    res.json({ sessionId, role: openRole, stage: state.stage, level, rejoining: false });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to join session' });
   }
 });
 
-// POST /api/game/create-ai — create a solo session with an AI Builder
+// POST /api/game/create-ai — create a solo session with an AI partner
 router.post('/create-ai', authMiddleware, async (req, res) => {
   const { username, id: userId } = req.user;
   const sessionId = uuidv4().slice(0, 8).toUpperCase();
   const startStage = normalizeStartStage(req.body?.startStage);
   const level = normalizeLevel(req.body?.level);
+  const role = normalizeRole(req.body?.role);
+  const aiRole = role === 'Architect' ? 'Builder' : 'Architect';
 
   try {
     const initialState = {
@@ -105,17 +115,17 @@ router.post('/create-ai', authMiddleware, async (req, res) => {
       score: 0,
       ai_game: true,
       players: {
-        Architect: { name: username, userId, ready: false },
-        Builder:   { name: 'AI Buddy', userId: null, isAI: true, ready: false },
+        [role]:   { name: username, userId, ready: false },
+        [aiRole]: { name: 'AI Buddy', userId: null, isAI: true, ready: false },
       },
       chat: [],
     };
 
-    await Session.create({ _id: sessionId, stage: startStage, level, state: initialState });
+    await Session.create({ _id: sessionId, stage: startStage, startStage, level, state: initialState });
     // Only insert the human player — AI has no users document
-    await Player.create({ sessionId, userId, name: username, role: 'Architect' });
+    await Player.create({ sessionId, userId, name: username, role });
 
-    res.json({ sessionId, role: 'Architect', stage: startStage, level });
+    res.json({ sessionId, role, stage: startStage, level });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create AI session' });

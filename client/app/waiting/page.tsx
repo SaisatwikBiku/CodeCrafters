@@ -6,6 +6,8 @@ import { AUTH } from "@/lib/auth";
 import { useGame } from "@/lib/game-context";
 import { SERVER_URL } from "../CONSTANT";
 import { Layers, Hammer, Lightbulb, ArrowLeft, Loader2, Copy, Check } from "lucide-react";
+import { SFX } from "@/lib/sfx";
+import { Music } from "@/lib/music";
 
 const ROLE_TIPS: Record<string, string[]> = {
   Architect: [
@@ -72,6 +74,11 @@ function WaitingContent() {
   };
 
   useEffect(() => {
+    Music.play("waiting");
+    return () => { Music.stop(); };
+  }, []);
+
+  useEffect(() => {
     if (!AUTH.isLoggedIn()) { router.replace("/login"); return; }
     if (!sessionId || sessionId === "------") { router.replace("/lobby"); return; }
 
@@ -102,7 +109,7 @@ function WaitingContent() {
         updateState({ socket, sessionId, playerName: AUTH.getUsername(), role: role as any });
         socket.emit("join_room", { sessionId, playerName: AUTH.getUsername(), role });
       });
-      socket.on("player_joined", ({ state: gameState }: any) => { transitionToGame(gameState, socket); });
+      socket.on("player_joined", ({ state: gameState }: any) => { SFX.partnerJoined(); transitionToGame(gameState, socket); });
       socket.on("error", ({ message }: any) => { alert("Server error: " + message); });
     };
 

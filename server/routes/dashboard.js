@@ -4,9 +4,19 @@ import { Session, Player } from '../db/mongodb.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { BUILDINGS, LEVEL_NAMES } from '../constants.js';
 
-// For a session row, return the number of stages fully completed.
-function stagesDone(row) {
-  return row.completed ? 5 : Math.max(0, row.stage - 1);
+// Returns the inclusive range [startStage, lastCompletedStage] for a session.
+// startStage defaults to 1 for legacy sessions that predate the field.
+//
+// IMPORTANT: abandoned sessions are also marked completed=true (they're "over")
+// but stage never reached 5, so we must NOT count them as a full playthrough.
+// Only treat as fully played when the game actually reached the final stage.
+function completedStageRange(row) {
+  const start = row.startStage || 1;
+  // Legitimately finished: completed flag set AND stage reached the end
+  if (row.completed && row.stage >= 5) return { start, end: 5 };
+  // Abandoned (completed=true but stage < 5) or still in progress:
+  // only credit the stages that were actually played through
+  return { start, end: row.stage - 1 };
 }
 
 // GET /api/dashboard/buildings
@@ -20,7 +30,7 @@ router.get('/buildings', authMiddleware, async (req, res) => {
     const sessionIds = players.map(p => p.sessionId);
     const sessions = await Session.find(
       { _id: { $in: sessionIds } },
-      { _id: 1, stage: 1, level: 1, completed: 1 }
+      { _id: 1, stage: 1, startStage: 1, level: 1, completed: 1 }
     ).lean();
 
     const progress = {};
@@ -29,10 +39,11 @@ router.get('/buildings', authMiddleware, async (req, res) => {
       let inProgressLevel = null;
 
       for (const row of sessions) {
-        const done = stagesDone(row);
+        const { start, end } = completedStageRange(row);
         const lvl = row.level || 1; // default to Foundation for legacy sessions
 
-        if (done >= stageNumber) {
+        // This building's stage falls within the stages actually completed
+        if (stageNumber >= start && stageNumber <= end) {
           completedLevels.add(lvl);
         } else if (!row.completed && row.stage === stageNumber) {
           // Currently playing this building at this level — mark as in-progress
@@ -88,10 +99,10 @@ router.get('/stats', authMiddleware, async (req, res) => {
     const levelCounts = { 1: new Set(), 2: new Set(), 3: new Set() };
 
     for (const s of sessions) {
-      const done = stagesDone(s);
+      const { start, end } = completedStageRange(s);
       const lvl = s.level || 1;
 
-      for (let i = 1; i <= done; i++) {
+      for (let i = start; i <= end; i++) {
         completedCombos.add(`${i}:${lvl}`);
         startedBuildings.add(i);
         levelCounts[lvl].add(i);

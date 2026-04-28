@@ -4,6 +4,11 @@ import { Stage } from "@/types";
 //   Level 1 — Foundation: variables, data types, print(), input()
 //   Level 2 — Walls:      conditionals, loops, lists
 //   Level 3 — Roof:       functions with parameters and return values
+//
+// Architect tasks: player defines variables / structures from scratch.
+// Builder tasks:   variables are PRE-INITIALIZED in starterCode (as if the
+//                  Architect already set them up). The Builder only writes
+//                  logic — never re-declares what's already there.
 export const STAGES: Stage[] = [
   // ─── Stage 1 · Library ─────────────────────────────────────────────────
   {
@@ -26,15 +31,15 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Library · Foundation — Count the Books",
-            description: "Every library needs books on the shelves.",
+            title: "Library · Foundation — New Delivery",
+            description: "The Architect named the library and stocked it — track the new book delivery.",
             steps: [
-              "Create a variable called `book_count`.",
-              "Assign it the integer value: 500",
-              "Print the variable.",
+              "Your Architect set `book_count = 500` for you.",
+              "Declare `new_books = 50` and compute `total = book_count + new_books`.",
+              'Print: "Total books: " + str(total)',
             ],
-            starterCode: "# Define your variable below\n\n",
-            expected_output: "500",
+            starterCode: "# Variables from your Architect:\nbook_count = 500\n\n# Your task begins here:\n",
+            expected_output: "Total books: 550",
           },
         ],
       },
@@ -54,12 +59,12 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Library · Walls — List the Genres",
-            description: "Print every genre carried in the library.",
+            description: "The Architect catalogued the genres — loop through them and print each one.",
             steps: [
-              'Create `genres = ["Fiction", "Science", "History"]`.',
-              "Loop through the list and print each genre on its own line.",
+              "Your Architect prepared the `genres` list for you.",
+              "Loop through it and print each genre on its own line.",
             ],
-            starterCode: "# Create list and loop\n\n",
+            starterCode: '# Variables from your Architect:\ngenres = ["Fiction", "Science", "History"]\n\n# Your task begins here:\n',
             expected_output: "Fiction\nScience\nHistory",
           },
         ],
@@ -81,12 +86,13 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Library · Roof — Book Info Function",
-            description: "Print a book's title using a function.",
+            description: "The Architect named the book — write a function that prints its info.",
             steps: [
+              "Your Architect set `title = \"Python 101\"` for you.",
               'Define `book_info(title)` that prints: "Book: " + title',
-              'Call it with the argument "Python 101".',
+              "Call `book_info(title)`.",
             ],
-            starterCode: "# Define and call book_info(title)\n\n",
+            starterCode: '# Variables from your Architect:\ntitle = "Python 101"\n\n# Your task begins here:\n',
             expected_output: "Book: Python 101",
           },
         ],
@@ -115,15 +121,15 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Classroom · Foundation — Count Students",
-            description: "How many students are joining today?",
+            title: "Classroom · Foundation — Free Seats",
+            description: "The Architect counted total seats — figure out how many are still free.",
             steps: [
-              'Use `input()` to ask: "How many students? "',
-              "Convert to int, store in `students`.",
-              'Print: "Seats needed: " + str(students)',
+              "Your Architect set `total_seats = 30` for you.",
+              "Declare `occupied = 22` and compute `free = total_seats - occupied`.",
+              'Print: "Free seats: " + str(free)',
             ],
-            starterCode: "# Read student count\n\n",
-            expected_output: null,
+            starterCode: "# Variables from your Architect:\ntotal_seats = 30\n\n# Your task begins here:\n",
+            expected_output: "Free seats: 8",
           },
         ],
       },
@@ -143,12 +149,12 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Classroom · Walls — Pass or Retry",
-            description: "Check whether a test score is a pass.",
+            description: "The Architect recorded the score — check whether it's a pass.",
             steps: [
-              "Create `score = 85`.",
-              'If `score >= 80` print "Great!", else print "Try again".',
+              "Your Architect set `score = 85` for you.",
+              'If score >= 80, print "Great!", else print "Try again".',
             ],
-            starterCode: "# Conditional score check\nscore = 85\n\n",
+            starterCode: "# Variables from your Architect:\nscore = 85\n\n# Your task begins here:\n",
             expected_output: "Great!",
           },
         ],
@@ -169,12 +175,13 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Classroom · Roof — Grade Function",
-            description: "Return a grade from a score.",
+            description: "The Architect logged the score — write a function that returns the grade.",
             steps: [
+              "Your Architect set `score = 75` for you.",
               'Define `grade(score)` that returns "Pass" if score >= 60, else "Fail".',
-              "Print `grade(75)`.",
+              "Print `grade(score)`.",
             ],
-            starterCode: "# Define grade(score) and print the result\n\n",
+            starterCode: "# Variables from your Architect:\nscore = 75\n\n# Your task begins here:\n",
             expected_output: "Pass",
           },
         ],
@@ -202,14 +209,15 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Cafeteria · Foundation — Meal Name",
-            description: "Announce today's special.",
+            title: "Cafeteria · Foundation — Discounted Meal",
+            description: "The Architect set the meal and its price — apply the student discount.",
             steps: [
-              'Create `meal_name = "Pasta"`.',
-              'Print: "Today: " + meal_name',
+              "Your Architect set `meal_name` and `meal_price` for you.",
+              "Declare `discount = 2` and compute `final_price = meal_price - discount`.",
+              'Print: "Today: " + meal_name + " for $" + str(final_price)',
             ],
-            starterCode: "# Print today's meal\n\n",
-            expected_output: "Today: Pasta",
+            starterCode: '# Variables from your Architect:\nmeal_name = "Pasta"\nmeal_price = 8\n\n# Your task begins here:\n',
+            expected_output: "Today: Pasta for $6",
           },
         ],
       },
@@ -228,13 +236,13 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Cafeteria · Walls — Enough Food?",
-            description: "Check if there are enough food trays.",
+            title: "Cafeteria · Walls — Enough Trays?",
+            description: "The Architect tracked trays and students — check if there's enough.",
             steps: [
-              "Set `trays = 30`, `students = 25`.",
+              "Your Architect set `trays = 30` and `students = 25` for you.",
               'If trays >= students, print "Enough trays!", else print "Need more trays!"',
             ],
-            starterCode: "# Check tray supply\ntrays = 30\nstudents = 25\n\n",
+            starterCode: "# Variables from your Architect:\ntrays = 30\nstudents = 25\n\n# Your task begins here:\n",
             expected_output: "Enough trays!",
           },
         ],
@@ -255,12 +263,13 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Cafeteria · Roof — Is It Open?",
-            description: "Return True when we're in serving hours.",
+            description: "The Architect set the lunch hour — write a function to check if we're serving.",
             steps: [
+              "Your Architect set `hour = 12` for you.",
               "Define `is_open(hour)` that returns `hour >= 9 and hour <= 14`.",
-              "Print `is_open(12)`.",
+              "Print `is_open(hour)`.",
             ],
-            starterCode: "# Define is_open(hour) and print the result\n\n",
+            starterCode: "# Variables from your Architect:\nhour = 12\n\n# Your task begins here:\n",
             expected_output: "True",
           },
         ],
@@ -288,14 +297,15 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Science Lab · Foundation — Count Beakers",
-            description: "Track how many beakers are on the bench.",
+            title: "Science Lab · Foundation — Working Beakers",
+            description: "The Architect counted all beakers — subtract the broken ones for the lab report.",
             steps: [
-              "Create `beakers = 12`.",
-              'Print: "Beakers: " + str(beakers)',
+              "Your Architect set `beakers = 12` for you.",
+              "Declare `broken = 2` and compute `working = beakers - broken`.",
+              'Print: "Working beakers: " + str(working)',
             ],
-            starterCode: "# Count the beakers\n\n",
-            expected_output: "Beakers: 12",
+            starterCode: "# Variables from your Architect:\nbeakers = 12\n\n# Your task begins here:\n",
+            expected_output: "Working beakers: 10",
           },
         ],
       },
@@ -315,12 +325,12 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Science Lab · Walls — Temperature Check",
-            description: "Decide if the lab is warm or cold.",
+            description: "The Architect measured the temperature — decide if the lab is warm or cold.",
             steps: [
-              "Create `temp = 75`.",
-              'If `temp > 50` print "Warm", else print "Cold".',
+              "Your Architect set `temp = 75` for you.",
+              'If temp > 50, print "Warm", else print "Cold".',
             ],
-            starterCode: "# Temperature check\ntemp = 75\n\n",
+            starterCode: "# Variables from your Architect:\ntemp = 75\n\n# Your task begins here:\n",
             expected_output: "Warm",
           },
         ],
@@ -341,13 +351,14 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Science Lab · Roof — Greet Students",
-            description: "Write a function that greets a student by name.",
+            title: "Science Lab · Roof — Greet a Student",
+            description: "The Architect identified the student — write a function that greets them.",
             steps: [
+              'Your Architect set `name = "Alex"` for you.',
               'Define `greet(name)` that prints: "Hello, " + name + "!"',
-              'Call it with the argument "Alex".',
+              "Call `greet(name)`.",
             ],
-            starterCode: "# Define and call greet(name)\n\n",
+            starterCode: '# Variables from your Architect:\nname = "Alex"\n\n# Your task begins here:\n',
             expected_output: "Hello, Alex!",
           },
         ],
@@ -375,14 +386,15 @@ export const STAGES: Stage[] = [
         ],
         Builder: [
           {
-            title: "Playground · Foundation — Count the Swings",
-            description: "Keep track of the swing set.",
+            title: "Playground · Foundation — Usable Swings",
+            description: "The Architect counted the swings — subtract the broken ones and report.",
             steps: [
-              "Create `swing_count = 4`.",
-              'Print: "Swings: " + str(swing_count)',
+              "Your Architect set `swing_count = 4` for you.",
+              "Declare `broken = 1` and compute `usable = swing_count - broken`.",
+              'Print: "Usable swings: " + str(usable)',
             ],
-            starterCode: "# Count the swings\n\n",
-            expected_output: "Swings: 4",
+            starterCode: "# Variables from your Architect:\nswing_count = 4\n\n# Your task begins here:\n",
+            expected_output: "Usable swings: 3",
           },
         ],
       },
@@ -402,12 +414,12 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Playground · Walls — Count Activities",
-            description: "How many activities can kids do?",
+            description: "The Architect listed the activities — count how many there are.",
             steps: [
-              'Create `activities = ["Football", "Basketball", "Tag"]`.',
+              "Your Architect prepared the `activities` list for you.",
               'Print: "Total activities: " + str(len(activities))',
             ],
-            starterCode: "# List and length\n\n",
+            starterCode: '# Variables from your Architect:\nactivities = ["Football", "Basketball", "Tag"]\n\n# Your task begins here:\n',
             expected_output: "Total activities: 3",
           },
         ],
@@ -428,12 +440,13 @@ export const STAGES: Stage[] = [
         Builder: [
           {
             title: "Playground · Roof — Double the Fun",
-            description: "Return a doubled value from a function.",
+            description: "The Architect set the base number — write a function that doubles it.",
             steps: [
+              "Your Architect set `n = 5` for you.",
               "Define `double_fun(n)` that returns `n * 2`.",
-              "Print `double_fun(5)`.",
+              "Print `double_fun(n)`.",
             ],
-            starterCode: "# Define double_fun(n) and print the result\n\n",
+            starterCode: "# Variables from your Architect:\nn = 5\n\n# Your task begins here:\n",
             expected_output: "10",
           },
         ],

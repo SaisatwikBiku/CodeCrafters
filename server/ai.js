@@ -102,18 +102,26 @@ const LEVEL_SPEC = {
     allowed: `ALLOWED constructs (Foundation):
 - Variable assignment: name = value
 - Data types: str, int, float, bool
-- print() with string concatenation or a single value
+- print() with plain string concatenation using + and str() only
 - input() only when the task explicitly needs user input (set expected_output to null in that case)
-FORBIDDEN: if/else, loops, functions, lists, imports, f-strings`,
-    exampleSolution: `# Architect example (Cafeteria · Foundation):
-special = "Pizza Friday"
-print(special)
-# expected_output: "Pizza Friday"
+FORBIDDEN: if/else, loops, functions, lists, imports, f-strings (NO f"..." syntax anywhere — not in starterCode, not in solutions)
+Use string concatenation: print("Value: " + str(x))  — NEVER print(f"Value: {x}")`,
+    architectExample: `# Architect (Library · Foundation):
+lib_name = "Grand Library"
+is_open = True
+print(lib_name + " open: " + str(is_open))
+# expected_output: "Grand Library open: True"
+# Note: plain string concatenation with +, NOT f-strings.`,
+    builderExample: `# Builder (Library · Foundation):
+# Variables from your Architect:
+book_count = 500
 
-# Builder example (Gym · Foundation):
-score = 42
-print(score)
-# expected_output: "42"`,
+# Your task begins here:
+new_books = 50
+total = book_count + new_books
+print("Total books: " + str(total))
+# expected_output: "Total books: 550"
+# Note: plain string concatenation with +, NOT f-strings.`,
   },
   2: {
     name: 'Walls',
@@ -126,19 +134,23 @@ print(score)
 - len() is allowed
 - Variables and data types from Foundation
 FORBIDDEN: while loops, functions (def), imports, try/except, nested functions`,
-    exampleSolution: `# Architect example (Cafeteria · Walls):
+    architectExample: `# Architect (Cafeteria · Walls):
 meals = 80
 if meals > 50:
     print("Busy day!")
 else:
     print("Quiet day")
 # expected_output: "Busy day!"
-
-# Builder example (Gym · Walls):
+# Architect sets the threshold and writes the conditional decision.`,
+    builderExample: `# Builder (Gym · Walls):
+# Variables from your Architect:
 teams = ["Tigers", "Hawks", "Wolves"]
+
+# Your task begins here:
 for t in teams:
     print(t)
-# expected_output: "Tigers\\nHawks\\nWolves"`,
+# expected_output: "Tigers\\nHawks\\nWolves"
+# Builder receives the pre-set list, loops through it to process each item.`,
   },
   3: {
     name: 'Roof',
@@ -150,19 +162,24 @@ for t in teams:
 - if/else and lists inside the function body if needed
 - Variables and data types from Foundation
 FORBIDDEN: classes, imports, recursion, lambda, global variables modified inside function`,
-    exampleSolution: `# Architect example (Cafeteria · Roof):
+    architectExample: `# Architect (Cafeteria · Roof):
 def greet(name):
     return "Hey " + name + ", lunch is ready!"
 print(greet("Alex"))
 # expected_output: "Hey Alex, lunch is ready!"
+# Architect defines the function concept and calls it with a literal argument.`,
+    builderExample: `# Builder (Gym · Roof):
+# Variables from your Architect:
+score = 60
 
-# Builder example (Gym · Roof):
+# Your task begins here:
 def winner(score):
     if score > 50:
         return "Win"
     return "Loss"
-print(winner(60))
-# expected_output: "Win"`,
+print(winner(score))
+# expected_output: "Win"
+# Builder receives a pre-set variable, defines the function, and calls it with that variable.`,
   },
 };
 
@@ -176,9 +193,24 @@ print(winner(60))
 export async function generateTask({ building, stage, level, role }) {
   const spec = LEVEL_SPEC[level] ?? LEVEL_SPEC[1];
 
-  const roleContext = role === 'Architect'
-    ? `The Architect designs and names things (declaring values, naming structures, making boolean decisions).`
-    : `The Builder constructs and counts things (processing data, iterating over collections, computing results).`;
+  const isBuilder = role === 'Builder';
+
+  const roleContext = isBuilder
+    ? `The Builder's job is to USE variables the Architect already set up — implementing loops, conditionals, or functions with that data. Both roles learn the same Python concept, but from different angles: the Architect designs/names the data, the Builder processes/implements with it.`
+    : `The Architect's job is to DESIGN and DECLARE — naming variables, setting values, creating lists, writing conditions that define the rules of the building.`;
+
+  const starterCodeRule = isBuilder
+    ? `starterCode for Builder MUST follow this exact format:
+  Line 1: "# Variables from your Architect:"
+  Line 2+: pre-initialized variables the Builder will use (do NOT ask them to re-declare these)
+  Then a blank line, then: "# Your task begins here:"
+  This makes it clear to the Builder that these variables already exist.
+  For Foundation level, include 1–2 pre-set variables AND leave room for the Builder to declare 1 new variable of their own.
+  For Walls level, pre-set the list or comparison value the Builder will loop/branch over.
+  For Roof level, pre-set the argument variable the Builder will pass into their function.`
+    : `starterCode for Architect: 1–2 lines max — a helpful comment or a partial first line showing where to start. No solution code.`;
+
+  const exampleSolution = isBuilder ? spec.builderExample : spec.architectExample;
 
   const systemText = `You are a Python question generator for CodeCrafters, a coding game for high school students (ages 14–18).
 You produce exactly one Python coding task per request. Tasks must feel fun, quick, and totally achievable in under 3 minutes.
@@ -192,12 +224,19 @@ ${spec.allowed}
 5. Variable names must be SHORT and simple (e.g. score, name, count, team — NOT compound_names_like_this).
 6. expected_output must be the EXACT stdout string the correct solution prints, using real \\n for multiple lines.
    Only set expected_output to null when the task genuinely requires input().
-7. starterCode: 1–2 lines max — a helpful comment or a partial first line. No solution code.
+7. ${starterCodeRule}
 8. steps: EXACTLY 2 or 3 short, friendly steps. No more. Guide without revealing the answer.
+   For Builder steps: begin the first step with "Your Architect set [variable] for you." so the student understands the context.
+   For Architect steps: begin with creating/declaring the needed variables or structures.
 9. Return ONLY a JSON object — no markdown fences, no prose outside the JSON.
 
-Example solutions for reference (do NOT copy these exactly — create a fresh variation):
-${spec.exampleSolution}`;
+ROLE DIFFERENTIATION:
+Both roles learn the same Python concept at each level. The difference is perspective:
+- Architect = designer: declares variables, creates lists, sets thresholds and names
+- Builder = implementer: receives pre-set data, writes the logic/computation/function that processes it
+
+Example for this role (do NOT copy — create a fresh variation):
+${exampleSolution}`;
 
   const userText = `Generate a fun, simple ${spec.name} level Python task for a high schooler:
 - Building: ${building} (stage ${stage}/5)
@@ -211,7 +250,7 @@ Return JSON with exactly these keys:
   "title": "<Building> · ${spec.name} — <Short Fun Task Name>",
   "description": "<one fun sentence that sets the scene>",
   "steps": ["<step 1>", "<step 2>"],
-  "starterCode": "<1-2 line starter>",
+  "starterCode": "<starter code following the role rules above>",
   "expected_output": "<exact stdout or null>"
 }`;
 
