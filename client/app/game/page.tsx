@@ -487,7 +487,7 @@ export default function GamePage() {
           )}
 
           {/* Campus canvas */}
-          <div className={`flex-1 bg-[#e0f2fe] flex items-stretch justify-stretch overflow-hidden ${state.isAI ? "border-b-2 border-[#1a1a1a]" : ""} relative`}>
+          <div className="flex-1 bg-[#e0f2fe] flex items-stretch justify-stretch overflow-hidden border-b-2 border-[#1a1a1a] relative">
             <CampusCanvas completedStages={state.completedStages} style={{ width: "100%", height: "100%" }} />
             <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-white/90 border-2 border-[#1a1a1a] rounded-xl px-3 py-1.5 text-[11px] font-black text-[#1a1a1a] shadow-[var(--shadow-sm)]">
               <stageBuilding.Icon size={12} />
@@ -509,23 +509,34 @@ export default function GamePage() {
             )}
           </div>
 
-          {/* AI Study Buddy chat — multiplayer mode hides this entirely */}
-          {state.isAI && (
+          {/* Chat panel — AI Study Buddy for AI mode, Partner Chat for two-player */}
           <div className="flex-shrink-0 h-[290px] border-t-2 border-[#1a1a1a] flex flex-col bg-white">
             {/* Chat header */}
-            <div className="flex items-center gap-2 px-4 py-2 border-b border-[#e5e7eb] bg-[#f8f7ff] flex-shrink-0">
-              <Bot size={15} className="text-[#7c3aed]" />
-              <span className="text-[12px] font-black text-[#7c3aed]">AI Study Buddy</span>
-              <span className="text-[10px] text-[#78716c] font-bold">· Ask anything about your task</span>
-              <div className="ml-auto w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            </div>
+            {state.isAI ? (
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-[#e5e7eb] bg-[#f8f7ff] flex-shrink-0">
+                <Bot size={15} className="text-[#7c3aed]" />
+                <span className="text-[12px] font-black text-[#7c3aed]">AI Study Buddy</span>
+                <span className="text-[10px] text-[#78716c] font-bold">· Ask anything about your task</span>
+                <div className="ml-auto w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-[#e5e7eb] bg-[#f0fdf4] flex-shrink-0">
+                <Send size={15} className="text-[#16a34a]" />
+                <span className="text-[12px] font-black text-[#16a34a]">Partner Chat</span>
+                <span className="text-[10px] text-[#78716c] font-bold">· Collaborate with your partner</span>
+                <div className="ml-auto w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+              </div>
+            )}
 
             {/* Messages */}
             <div ref={chatRef} className="flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-1.5 text-[0.78rem]">
               {messages.length === 0 && (
                 <p className="flex items-center gap-1.5 text-[0.74rem] text-[#78716c] italic font-bold mt-1">
-                  <Bot size={12} className="flex-shrink-0" />
-                  Stuck? Type a question and hit Send — your AI tutor is ready!
+                  {state.isAI ? (
+                    <><Bot size={12} className="flex-shrink-0" />Stuck? Type a question and hit Send — your AI tutor is ready!</>
+                  ) : (
+                    <><Send size={12} className="flex-shrink-0" />Use this chat to collaborate with your partner!</>
+                  )}
                 </p>
               )}
               {messages.map((m) => (
@@ -549,7 +560,7 @@ export default function GamePage() {
             <div className="flex gap-2 px-3 py-2 border-t border-[#e5e7eb] bg-[#f9fafb] flex-shrink-0">
               <input
                 type="text"
-                placeholder="Ask a hint, e.g. 'how do I use a for loop?'"
+                placeholder={state.isAI ? "Ask a hint, e.g. 'how do I use a for loop?'" : "Message your partner..."}
                 maxLength={200}
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
@@ -565,7 +576,6 @@ export default function GamePage() {
               </button>
             </div>
           </div>
-          )}
         </section>
       </main>
     </>
